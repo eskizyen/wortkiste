@@ -1,0 +1,1410 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Spektrum B1+ Wortkiste</title>
+<meta name="description" content="Vokabeln, Verben und Grammatik zu Spektrum Deutsch B1+">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#eef1f5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11151b" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Wortkiste">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<style>
+html{-webkit-text-size-adjust:100%;color-scheme:light}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;-webkit-tap-highlight-color:transparent}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one column "card box" app — header + tab strip, chapter grid mirrors the book's 12 Kapitel, index-card trainer below. */
+:root{
+  --paper:#eef1f5; --card:#ffffff; --soft:#e4e9ef; --ink:#18212c; --muted:#5a6878; --line:#d3dae3;
+  --accent:#1e4b9c; --accent-ink:#ffffff; --rule:#d9534f; --ruled:#dfe7f2;
+  --der:#2357b5; --die:#c0352e; --das:#22804d;
+  --akk:#a85d06; --dat:#7446b3; --gen:#0d7a73; --nom:#5a6878;
+  --ok:#22804d; --bad:#c0352e; --ok-bg:#e3f3ea; --bad-bg:#fbe6e4;
+  --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#11151b; --card:#1a2029; --soft:#232b36; --ink:#e5eaf0; --muted:#97a4b4; --line:#2d3743;
+  --accent:#86a9ec; --accent-ink:#0c1320; --rule:#e2736f; --ruled:#232d3a;
+  --der:#7ea6f2; --die:#f08178; --das:#6ccf96;
+  --akk:#f0a752; --dat:#bb9cf2; --gen:#5ccac1; --nom:#97a4b4;
+  --ok:#6ccf96; --bad:#f08178; --ok-bg:#16301f; --bad-bg:#3a1c1b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#11151b; --card:#1a2029; --soft:#232b36; --ink:#e5eaf0; --muted:#97a4b4; --line:#2d3743;
+  --accent:#86a9ec; --accent-ink:#0c1320; --rule:#e2736f; --ruled:#232d3a;
+  --der:#7ea6f2; --die:#f08178; --das:#6ccf96;
+  --akk:#f0a752; --dat:#bb9cf2; --gen:#5ccac1; --nom:#97a4b4;
+  --ok:#6ccf96; --bad:#f08178; --ok-bg:#16301f; --bad-bg:#3a1c1b; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:15px/1.5 var(--f-body)}
+.wrap{max-width:880px;margin:0 auto;padding-inline:16px;padding-block:18px 48px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px}
+.brand small{display:block;font:500 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.brand h1{margin:0;font:700 40px/0.9 var(--f-display);letter-spacing:.01em;text-transform:uppercase}
+.brand h1 span{color:var(--accent)}
+nav{display:flex;gap:4px;overflow-x:auto;background:var(--soft);padding:4px;border-radius:10px;max-width:100%;scrollbar-width:none}
+nav button{all:unset;cursor:pointer;white-space:nowrap;padding:7px 12px;border-radius:7px;font:600 15px/1 var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+nav button[aria-selected="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+nav button:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+h2{font:700 24px/1.1 var(--f-display);text-transform:uppercase;letter-spacing:.03em;margin:0;text-wrap:balance}
+h3{font:600 18px/1.2 var(--f-display);text-transform:uppercase;letter-spacing:.05em;margin:0 0 8px}
+.lede{color:var(--muted);margin:4px 0 0;max-width:62ch}
+.label{font:500 11px/1.2 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+section{display:flex;flex-direction:column;gap:16px}
+
+/* chapter grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.ch{all:unset;cursor:pointer;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 10px 10px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.ch .row{display:flex;align-items:baseline;gap:8px;min-width:0}
+.ch b{font:700 22px/1 var(--f-display);color:var(--accent);font-variant-numeric:tabular-nums;min-width:1.2em}
+.ch span{font:500 14px/1.2 var(--f-body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ch[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.bar{height:4px;background:var(--soft);border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok)}
+.ch small{font:400 11px/1 var(--f-mono);color:var(--muted)}
+
+/* index card */
+.trainer{display:flex;flex-direction:column;gap:12px;align-items:stretch}
+.tbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.seg{display:inline-flex;background:var(--soft);border-radius:8px;padding:3px;gap:2px}
+.seg button{all:unset;cursor:pointer;padding:5px 10px;border-radius:6px;font:500 13px/1.2 var(--f-body);color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--card);color:var(--ink)}
+.icard{all:unset;cursor:pointer;display:block;position:relative;background:var(--card);border-radius:6px;min-height:230px;padding:44px 22px 22px;box-shadow:0 1px 0 var(--line),0 8px 24px -14px rgba(10,30,60,.35);
+  background-image:linear-gradient(var(--card),var(--card)),repeating-linear-gradient(to bottom,transparent 0 31px,var(--ruled) 31px 32px);
+  background-size:100% 34px,100% 100%;background-repeat:no-repeat;background-position:0 0,0 34px;text-align:center}
+.icard::before{content:"";position:absolute;left:0;right:0;top:34px;height:2px;background:var(--rule);opacity:.75}
+.icard .meta{position:absolute;top:9px;left:14px;right:14px;display:flex;justify-content:space-between;gap:10px}
+.icard .meta .label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
+.opts.long{grid-template-columns:1fr}
+.opts.long .opt{text-align:left;font:500 15px/1.35 var(--f-body);padding:11px 13px}
+.icard .front{font:600 clamp(26px,6vw,40px)/1.15 var(--f-body);word-break:break-word;margin-top:18px}
+.icard .pl{font:400 14px/1.4 var(--f-mono);color:var(--muted);margin-top:6px}
+.icard .back{margin-top:18px;padding-top:12px;border-top:1px dashed var(--line);font:500 20px/1.4 var(--f-body)}
+.icard .hint{margin-top:18px;color:var(--muted);font-size:13px}
+.art{font-weight:600}
+.art-der{color:var(--der)} .art-die{color:var(--die)} .art-das{color:var(--das)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn{all:unset;cursor:pointer;text-align:center;padding:11px 14px;border-radius:8px;font:600 15px/1.2 var(--f-body);border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.ok{color:var(--ok);border-color:var(--ok)} .btn.bad{color:var(--bad);border-color:var(--bad)}
+.btn:disabled{opacity:.45;cursor:default}
+.boxes{display:flex;gap:4px;align-items:center}
+.boxes i{width:10px;height:10px;border-radius:2px;background:var(--soft);border:1px solid var(--line)}
+.boxes i.on{background:var(--ok);border-color:var(--ok)}
+.done{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:24px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
+.done strong{font:700 34px/1 var(--f-display)}
+
+/* drills */
+.drills{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
+.drill{all:unset;cursor:pointer;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:4px}
+.drill b{font:600 17px/1.15 var(--f-display);text-transform:uppercase;letter-spacing:.04em}
+.drill span{color:var(--muted);font-size:13px}
+.drill[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.q{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.q .prompt{font:600 clamp(22px,5vw,32px)/1.2 var(--f-body);word-break:break-word}
+.q .sub{color:var(--muted);margin-top:-8px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.opt{all:unset;cursor:pointer;text-align:center;padding:12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);font:600 17px/1.2 var(--f-body)}
+.opt kbd{font:400 11px var(--f-mono);color:var(--muted);margin-right:6px}
+.opt.right{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.opt.wrong{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+.fields{display:grid;gap:10px}
+.field{display:flex;flex-direction:column;gap:4px}
+input[type=text],select,textarea{font:16px/1.4 var(--f-body);color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%;min-width:0}
+textarea{font-family:var(--f-mono);font-size:14px;min-height:140px;resize:vertical}
+.field.ok input{border-color:var(--ok);background:var(--ok-bg)} .field.bad input{border-color:var(--bad);background:var(--bad-bg)}
+.fb{font-size:14px;color:var(--muted)} .fb b{color:var(--ink)}
+.explain{border-left:3px solid var(--accent);padding:4px 0 4px 12px;font-size:15px}
+.score{font:500 13px var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.chsel{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.chsel select{width:auto}
+
+/* cases */
+.case{display:inline-block;font:500 11px/1 var(--f-mono);padding:3px 6px;border-radius:4px;border:1px solid currentColor;letter-spacing:.04em;vertical-align:2px;white-space:nowrap}
+.c-A{color:var(--akk)} .c-D{color:var(--dat)} .c-G{color:var(--gen)} .c-N{color:var(--nom)}
+
+/* search */
+.search{display:flex;flex-direction:column;gap:10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{all:unset;cursor:pointer;padding:5px 10px;border-radius:99px;border:1px solid var(--line);font:500 13px/1.2 var(--f-body);color:var(--muted);background:var(--card)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.results{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.r{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:4px 14px;padding:10px 14px;border-top:1px solid var(--line)}
+.r:first-child{border-top:0}
+.r .de{font-weight:600;word-break:break-word}
+.r .en{color:var(--muted);word-break:break-word}
+.r .det{grid-column:1/-1;font-size:13.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.pp{border-bottom:2px solid currentColor;padding-bottom:0;white-space:nowrap}
+.pp sub{font:500 9.5px/1 var(--f-mono);letter-spacing:.03em;margin-left:2px;vertical-align:-1px}
+.icard .pp{color:inherit;border-bottom-color:var(--line)}
+.icard .pp.c-A{border-bottom-color:var(--akk)}.icard .pp.c-D{border-bottom-color:var(--dat)}.icard .pp.c-G{border-bottom-color:var(--gen)}.icard .pp.c-N{border-bottom-color:var(--nom)}
+.icard .pp sub{color:var(--muted)}
+.icard .pp.c-A sub{color:var(--akk)}.icard .pp.c-D sub{color:var(--dat)}.icard .pp.c-G sub{color:var(--gen)}
+.look{margin-top:10px}.lk{font:500 13px var(--f-body);color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+.vcard{background:var(--card);border:1px solid var(--accent);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:14px}
+.vhead{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}.vhead .label{width:100%}.vhead h3{font-size:28px;margin:0;text-transform:none;letter-spacing:0}.vhead .en{color:var(--muted)}
+.vforms{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}.vforms>div{background:var(--soft);border-radius:8px;padding:8px 10px;font:500 15px var(--f-mono);display:flex;flex-direction:column;gap:4px;min-width:0}
+.vrow{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:2px 14px;padding:8px 0;border-top:1px solid var(--line);font-size:14.5px}.vrow:first-of-type{margin-top:6px}.vrow .ex,.vrow .note{grid-column:1/-1;color:var(--muted);font-size:13.5px}.vrow .en{color:var(--muted)}
+@media (max-width:520px){.vrow{grid-template-columns:1fr}}
+.modal{position:fixed;inset:0;z-index:50;background:rgba(10,16,24,.5);display:flex;align-items:center;justify-content:center;padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px))}
+.modal[hidden]{display:none}
+.mbox{background:var(--card);color:var(--ink);border-radius:12px;width:100%;max-width:680px;max-height:100%;overflow:auto;overscroll-behavior:contain;padding:18px 20px 22px;box-shadow:0 20px 50px -20px rgba(0,0,0,.5);display:flex;flex-direction:column;gap:18px}
+html.lock,html.lock body{overflow:hidden}
+.mhead{display:flex;align-items:flex-start;gap:12px;position:sticky;top:-18px;background:var(--card);padding-top:4px;margin-top:-4px;z-index:1}
+.mhead>div{flex:1;min-width:0}.mhead h3{font:700 30px/1.1 var(--f-display);margin:4px 0 2px;text-transform:none;letter-spacing:.01em}.mhead .en{color:var(--muted)}
+.msec h4{font:600 15px/1.2 var(--f-display);text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px;color:var(--muted);display:flex;gap:8px;align-items:baseline}
+.conj td{font:400 14.5px var(--f-mono)}.conj td:first-child{font:600 13.5px var(--f-body)}.conj tr.formal td{border-top:1px dashed var(--line)}
+.pron{grid-column:1/-1;font:500 13px var(--f-mono);margin-top:2px}
+.pron.c-N{color:var(--nom)}
+#profile:empty{display:none}
+@media (prefers-reduced-motion:no-preference){.mbox{animation:pop .16s ease-out}@keyframes pop{from{transform:translateY(8px);opacity:.6}to{transform:none;opacity:1}}}
+.chip .n{font:500 11px var(--f-mono);opacity:.7;margin-left:2px}
+.recent{display:flex;flex-direction:column;gap:8px}.rhead{display:flex;justify-content:space-between;align-items:center}
+.lnk{all:unset;cursor:pointer;font:500 13px var(--f-body);color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+.chip.rc{color:var(--ink)}
+.empty{background:var(--card);border:1px dashed var(--line);border-radius:10px;padding:16px 18px}.empty p{margin:0 0 6px;max-width:60ch}
+.tbtns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.tbtn{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:4px;padding:10px 12px;border-radius:9px;border:1px solid var(--line);background:var(--paper);min-width:0}
+.tbtn b{font:600 18px/1.2 var(--f-mono);overflow-wrap:anywhere}
+.tbtn .note{font-size:12px}
+.tbtn[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:var(--card)}
+.tbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tlist{margin-top:10px;border:1px solid var(--line);border-radius:9px;padding:4px 12px}
+.trow{display:grid;grid-template-columns:7.5em minmax(0,1fr);gap:10px;padding:6px 0;border-top:1px solid var(--line)}
+.trow:first-child{border-top:0}
+.tp{font:600 13.5px var(--f-body)}.tf{font:400 15px var(--f-mono)}
+@media (max-width:420px){.tbtn b{font-size:15px}.tbtn{padding:9px}}
+.vt{display:inline-block;font:500 10.5px/1 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:99px;border:1px solid var(--line);color:var(--muted);vertical-align:1px;white-space:nowrap}
+.vt-irr{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.vt-mix{border-color:var(--ink);color:var(--ink)}
+.label.hl{display:flex;gap:8px;align-items:center}
+.r.tagged{position:relative;padding-right:64px}
+.vt.sm{position:absolute;top:10px;right:12px;font-size:9px;padding:2px 5px;letter-spacing:.04em}
+.setup{border-color:var(--accent);display:flex;flex-direction:column}
+.filebtn{position:relative;overflow:hidden;align-self:flex-start}
+.filebtn input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
+.filebtn:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.r.click{cursor:pointer}.r.click:hover,.r.click:focus-visible{background:var(--soft)}
+.r.click .de::after{content:" ›";color:var(--muted)}
+.x{all:unset;cursor:pointer;margin-left:auto;font:400 22px/1 var(--f-body);color:var(--muted);padding:0 4px}
+
+#profile{scroll-margin-top:12px}
+.r .det .k{font:500 10.5px/1 var(--f-mono);text-transform:uppercase;letter-spacing:.08em}
+.forms{font-family:var(--f-mono);font-size:13px;color:var(--ink)}
+.count{font:500 12px var(--f-mono);color:var(--muted)}
+@media (max-width:520px){.r{grid-template-columns:1fr}}
+
+/* grammar */
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0}
+.panel p{margin:6px 0 0;font-size:14px;color:var(--muted)}
+.preps{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.preps span{font:500 15px/1 var(--f-mono);padding:5px 8px;border-radius:5px;background:var(--soft)}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14.5px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font:500 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+td:first-child{font:600 13px var(--f-mono)}
+tr.dat td{background:color-mix(in srgb,var(--dat) 9%,transparent)}
+.ex{font-style:italic}
+
+/* mine */
+.mine-list .r{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto}
+.del{all:unset;cursor:pointer;color:var(--bad);font:500 13px var(--f-body);padding:2px 6px}
+.note{font-size:13.5px;color:var(--muted)}
+.flex{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+@media (prefers-reduced-motion:no-preference){.icard{transition:transform .15s ease}.icard:active{transform:scale(.99)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand"><small>Spektrum Deutsch B1+ · Kapitel 1–12</small><h1>Wort<span>kiste</span></h1></div>
+    <nav role="tablist" id="nav">
+      <button role="tab" data-tab="lernen" aria-selected="true">Lernen</button>
+      <button role="tab" data-tab="ueben" aria-selected="false">Üben</button>
+      <button role="tab" data-tab="suchen" aria-selected="false">Suchen</button>
+      <button role="tab" data-tab="grammatik" aria-selected="false">Grammatik</button>
+      <button role="tab" data-tab="meine" aria-selected="false">Meine Wörter</button>
+    </nav>
+  </header>
+
+  <!-- LERNEN -->
+  <section id="tab-lernen">
+    <div>
+      <h2>Karteikarten</h2>
+      <p class="lede">The book's Wörter und Wendungen, chapter by chapter. Underlined prepositions show their case (Akk, Dat, Gen). Cards you know move up a box; cards you miss go back to box 1 and come back sooner.</p>
+    </div>
+    <div class="panel setup" id="bookSetup" hidden>
+      <h3>Buchliste laden</h3>
+      <p class="note" style="margin:0 0 10px">Load the file <b>wortkiste-buchliste.json</b> once. It stays on this device only and is never uploaded.</p>
+      <label class="btn primary filebtn">Datei auswählen<input type="file" class="bookFile" accept=".json,application/json"></label>
+      <p class="note bookMsg" style="margin:8px 0 0"></p>
+    </div>
+    <div class="grid" id="grid"></div>
+    <div class="trainer" id="trainer"></div>
+  </section>
+
+  <!-- ÜBEN -->
+  <section id="tab-ueben" hidden>
+    <div>
+      <h2>Üben</h2>
+      <p class="lede">Short drills for the structures in the book. Keys: 1–4 to answer, Enter for next.</p>
+    </div>
+    <div class="drills" id="drills"></div>
+    <div id="drillArea"></div>
+  </section>
+
+  <!-- SUCHEN -->
+  <section id="tab-suchen" hidden>
+    <div>
+      <h2>Nachschlagen</h2>
+      <p class="lede">Search German or English. Type a verb or tap any result to see everything about it: forms, cases, prepositions and every book phrase that uses it.</p>
+    </div>
+    <div class="search">
+      <input type="text" id="q" placeholder="z. B. interessieren, Gewohnheit, to help …" autocomplete="off">
+      <div class="chips" id="filters"></div>
+    </div>
+    <div id="profile"></div>
+    <div id="recentBox"></div>
+    <div class="count" id="count"></div>
+    <div class="results" id="results"></div>
+  </section>
+
+  <!-- GRAMMATIK -->
+  <section id="tab-grammatik" hidden>
+    <div>
+      <h2>Grammatik auf einen Blick</h2>
+      <p class="lede">Which case comes after which preposition, and what the articles look like in each case.</p>
+    </div>
+    <div class="cols">
+      <div class="panel"><h3>Immer Akkusativ <span class="case c-A">Akk</span></h3>
+        <div class="preps"><span>durch</span><span>für</span><span>gegen</span><span>ohne</span><span>um</span><span>bis</span><span>entlang*</span></div>
+        <p>Ich kaufe ein Geschenk <span class="ex">für meinen Bruder</span>. *entlang steht nach dem Nomen: den Fluss entlang.</p></div>
+      <div class="panel"><h3>Immer Dativ <span class="case c-D">Dat</span></h3>
+        <div class="preps"><span>aus</span><span>bei</span><span>mit</span><span>nach</span><span>seit</span><span>von</span><span>zu</span><span>gegenüber</span><span>ab</span></div>
+        <p>Ich spreche <span class="ex">mit den Leuten</span>. Im Plural: Dativ = -n am Nomen.</p></div>
+      <div class="panel"><h3>Wechselpräpositionen</h3>
+        <div class="preps"><span>an</span><span>auf</span><span>hinter</span><span>in</span><span>neben</span><span>über</span><span>unter</span><span>vor</span><span>zwischen</span></div>
+        <p><b>Wo?</b> <span class="case c-D">Dat</span> Ich bin <span class="ex">in der Stadt</span>.<br><b>Wohin?</b> <span class="case c-A">Akk</span> Ich gehe <span class="ex">in die Stadt</span>.</p></div>
+      <div class="panel"><h3>Genitiv <span class="case c-G">Gen</span> · Kap. 6, 10, 12</h3>
+        <div class="preps"><span>wegen</span><span>trotz</span><span>während</span><span>(an)statt</span><span>innerhalb</span><span>außerhalb</span><span>aufgrund</span><span>laut</span></div>
+        <p><span class="ex">Trotz des Regens</span> gehen wir spazieren. <b>zufolge</b> + Dativ, nachgestellt: <span class="ex">dem Bericht zufolge</span>.</p></div>
+    </div>
+
+    <div class="panel"><h3>Bestimmter und unbestimmter Artikel</h3>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Kasus</th><th>maskulin</th><th>feminin</th><th>neutral</th><th>Plural</th></tr></thead>
+        <tbody>
+          <tr><td>Nom</td><td>der / ein</td><td>die / eine</td><td>das / ein</td><td>die / –</td></tr>
+          <tr><td>Akk</td><td><b>den</b> / <b>einen</b></td><td>die / eine</td><td>das / ein</td><td>die / –</td></tr>
+          <tr class="dat"><td>Dat</td><td>dem / einem</td><td>der / einer</td><td>dem / einem</td><td>den …<b>n</b> / –</td></tr>
+          <tr><td>Gen</td><td>des …(e)s / eines</td><td>der / einer</td><td>des …(e)s / eines</td><td>der / –</td></tr>
+        </tbody></table></div>
+      <p class="note">Possessiv- und Negativartikel (mein, dein, kein …) enden wie <i>ein</i>; im Plural: meine / meine / meinen …n / meiner.</p>
+    </div>
+
+    <div class="cols">
+      <div class="panel"><h3>Personal- und Reflexivpronomen · Kap. 6</h3>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Nom</th><th>Akk</th><th>Dat</th><th>Reflexiv</th></tr></thead>
+          <tbody>
+            <tr><td>ich</td><td>mich</td><td>mir</td><td>mich / mir</td></tr>
+            <tr><td>du</td><td>dich</td><td>dir</td><td>dich / dir</td></tr>
+            <tr><td>er/sie/es</td><td>ihn/sie/es</td><td>ihm/ihr/ihm</td><td>sich</td></tr>
+            <tr><td>wir</td><td>uns</td><td>uns</td><td>uns</td></tr>
+            <tr><td>ihr</td><td>euch</td><td>euch</td><td>euch</td></tr>
+            <tr><td>sie/Sie</td><td>sie/Sie</td><td>ihnen/Ihnen</td><td>sich</td></tr>
+          </tbody></table></div>
+        <p>Dativ-Reflexiv, wenn es schon ein Akkusativobjekt gibt: Ich wasche <b>mir</b> die Hände.</p></div>
+      <div class="panel"><h3>Satzbau: Verb an Position 1 oder 2?</h3>
+        <p><b>Aussage:</b> Am Wochenende <u>habe</u> ich meine Wohnung aufgeräumt.</p>
+        <p><b>Ja/Nein-Frage:</b> <u>Interessierst</u> du dich für Musik?</p>
+        <p><b>W-Frage:</b> Wofür <u>interessierst</u> du dich?</p>
+        <p><b>Nebensatz:</b> …, weil ich mich für Musik <u>interessiere</u>.</p>
+        <p class="note">Fragewort mit Präposition: wofür, worauf, woran, womit, worüber … (bei Personen: für wen, an wen, mit wem).</p></div>
+    </div>
+  </section>
+
+  <!-- MEINE WÖRTER -->
+  <section id="tab-meine" hidden>
+    <div>
+      <h2>Meine Wörter</h2>
+      <p class="lede">Add words from class or from the book's texts. One per line, German = English. Nouns with an article (die Gewohnheit, -en) also go into the Artikel drill. A line like <b>Kapitel 3</b> switches the chapter.</p>
+    </div>
+    <div class="panel" style="display:flex;flex-direction:column;gap:10px">
+      <label class="label" for="bulk">Neue Wörter</label>
+      <textarea id="bulk" placeholder="die Gewohnheit, -en = habit&#10;sich verabreden mit = to arrange to meet&#10;der Feierabend = end of the work day"></textarea>
+      <div class="flex">
+        <label class="label" for="bulkCh">Kapitel</label>
+        <select id="bulkCh" style="width:auto"></select>
+        <button class="btn primary" id="addBtn">Hinzufügen</button>
+        <span class="note" id="addMsg"></span>
+      </div>
+    </div>
+    <div class="results mine-list" id="mineList"></div>
+    <div class="panel" style="display:flex;flex-direction:column;gap:10px">
+      <h3>Buchliste</h3>
+      <p class="note" style="margin:0" id="bookInfo"></p>
+      <label class="btn filebtn" style="align-self:flex-start">Buchliste laden oder ersetzen<input type="file" class="bookFile" accept=".json,application/json"></label>
+      <p class="note bookMsg" style="margin:0"></p>
+    </div>
+    <div class="panel" style="display:flex;flex-direction:column;gap:10px">
+      <h3>Sichern und übertragen</h3>
+      <p class="note" style="margin:0">Your words and progress are saved in this browser only. Copy the backup text to move them to another device, then paste it there.</p>
+      <textarea id="backup" placeholder="Backup-Text hier einfügen …"></textarea>
+      <div class="flex">
+        <button class="btn" id="exportBtn">Backup anzeigen</button>
+        <button class="btn" id="copyBtn">Kopieren</button>
+        <button class="btn" id="importBtn">Backup einlesen</button>
+        <span class="note" id="bkMsg"></span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="modal" id="modal" hidden><div class="mbox" role="dialog" aria-modal="true" aria-labelledby="mtitle" id="mbody"></div></div>
+
+<script>
+/* ---------- DATA ---------- */
+const CHAPTERS=["Alltag","Essen und Essgewohnheiten","Im Berufsleben","Lernen und Weiterbildung","Städte","Gesundheit und Fitness","Wie wir leben","Produkte und Konsum","Reisen und Verkehr","Medien und Aktuelles","Geschichte und Politik","Innovation und Kreativität"];
+
+// The book's word list is NOT part of this site. It is loaded once from your own file and kept on this device.
+let BOOK=[];try{const b=JSON.parse(localStorage.getItem("wk_book")||"[]");if(Array.isArray(b))BOOK=b}catch(e){}
+
+// infinitive | er/sie/es Präsens | Präteritum | Perfekt | English  (Kap. 1: Vergangenheitsformen)
+const VERBS=`sein|ist|war|ist gewesen|to be
+haben|hat|hatte|hat gehabt|to have
+werden|wird|wurde|ist geworden|to become
+gehen|geht|ging|ist gegangen|to go
+kommen|kommt|kam|ist gekommen|to come
+fahren|fährt|fuhr|ist gefahren|to drive, travel
+fliegen|fliegt|flog|ist geflogen|to fly
+laufen|läuft|lief|ist gelaufen|to run, walk
+bleiben|bleibt|blieb|ist geblieben|to stay
+aufstehen|steht auf|stand auf|ist aufgestanden|to get up
+einschlafen|schläft ein|schlief ein|ist eingeschlafen|to fall asleep
+umziehen|zieht um|zog um|ist umgezogen|to move (house)
+aufwachsen|wächst auf|wuchs auf|ist aufgewachsen|to grow up
+umsteigen|steigt um|stieg um|ist umgestiegen|to change (trains)
+durchfallen|fällt durch|fiel durch|ist durchgefallen|to fail (an exam)
+sterben|stirbt|starb|ist gestorben|to die
+passieren|passiert|passierte|ist passiert|to happen
+essen|isst|aß|hat gegessen|to eat
+trinken|trinkt|trank|hat getrunken|to drink
+sehen|sieht|sah|hat gesehen|to see
+lesen|liest|las|hat gelesen|to read
+schreiben|schreibt|schrieb|hat geschrieben|to write
+sprechen|spricht|sprach|hat gesprochen|to speak
+nehmen|nimmt|nahm|hat genommen|to take
+geben|gibt|gab|hat gegeben|to give
+ausgeben|gibt aus|gab aus|hat ausgegeben|to spend
+finden|findet|fand|hat gefunden|to find
+helfen|hilft|half|hat geholfen|to help
+treffen|trifft|traf|hat getroffen|to meet
+beginnen|beginnt|begann|hat begonnen|to begin
+bringen|bringt|brachte|hat gebracht|to bring
+denken|denkt|dachte|hat gedacht|to think
+wissen|weiß|wusste|hat gewusst|to know (a fact)
+kennen|kennt|kannte|hat gekannt|to know (be familiar with)
+nennen|nennt|nannte|hat genannt|to name, call
+schlafen|schläft|schlief|hat geschlafen|to sleep
+tragen|trägt|trug|hat getragen|to carry, wear
+waschen|wäscht|wusch|hat gewaschen|to wash
+braten|brät|briet|hat gebraten|to fry
+schneiden|schneidet|schnitt|hat geschnitten|to cut
+gewinnen|gewinnt|gewann|hat gewonnen|to win
+verlieren|verliert|verlor|hat verloren|to lose
+bitten|bittet|bat|hat gebeten|to ask (for)
+bieten|bietet|bot|hat geboten|to offer
+ziehen|zieht|zog|hat gezogen|to pull
+stehen|steht|stand|hat gestanden|to stand
+liegen|liegt|lag|hat gelegen|to lie (be lying)
+sitzen|sitzt|saß|hat gesessen|to sit
+verstehen|versteht|verstand|hat verstanden|to understand
+vergessen|vergisst|vergaß|hat vergessen|to forget
+erfinden|erfindet|erfand|hat erfunden|to invent
+entscheiden|entscheidet|entschied|hat entschieden|to decide
+anrufen|ruft an|rief an|hat angerufen|to call (phone)
+einladen|lädt ein|lud ein|hat eingeladen|to invite
+verschieben|verschiebt|verschob|hat verschoben|to postpone
+besitzen|besitzt|besaß|hat besessen|to own
+bestehen|besteht|bestand|hat bestanden|to pass (an exam)
+vergleichen|vergleicht|verglich|hat verglichen|to compare
+fallen|fällt|fiel|ist gefallen|to fall
+steigen|steigt|stieg|ist gestiegen|to rise, climb`;
+
+// verb | preposition | case | English | example  (Kap. 1: Verben mit Präpositionen)
+const VPREP=`sich ärgern|über|A|to be annoyed about|Ich ärgere mich über den Stau.
+sich freuen|auf|A|to look forward to|Wir freuen uns auf das Wochenende.
+sich freuen|über|A|to be happy about|Sie freut sich über das Geschenk.
+sich interessieren|für|A|to be interested in|Ich interessiere mich für Geschichte.
+teilnehmen|an|D|to take part in|Er nimmt an einem Deutschkurs teil.
+warten|auf|A|to wait for|Wir warten auf den Bus.
+denken|an|A|to think of|Ich denke oft an meine Kindheit.
+sich erinnern|an|A|to remember|Erinnerst du dich an unseren Urlaub?
+sprechen|über|A|to talk about|Wir sprechen über das Wetter.
+sprechen|mit|D|to talk to|Ich spreche morgen mit meiner Chefin.
+sich beschweren|über|A|to complain about|Er beschwert sich über das kalte Essen.
+sich beschweren|bei|D|to complain to|Sie beschwert sich beim Kellner.
+sich kümmern|um|A|to take care of|Wer kümmert sich um die Kinder?
+sich bewerben|um|A|to apply for|Ich bewerbe mich um die Stelle.
+sich bewerben|bei|D|to apply to (a company)|Er bewirbt sich bei einer Bank.
+bitten|um|A|to ask for|Darf ich Sie um Hilfe bitten?
+fragen|nach|D|to ask about|Der Tourist fragt nach dem Weg.
+sich gewöhnen|an|A|to get used to|Ich habe mich an das Wetter gewöhnt.
+sich beschäftigen|mit|D|to deal with, occupy oneself with|Sie beschäftigt sich mit Kunst.
+sich treffen|mit|D|to meet (up) with|Ich treffe mich mit meinen Freunden.
+sich verabreden|mit|D|to arrange to meet|Ich habe mich mit Anna verabredet.
+sich unterhalten|mit|D|to chat with|Wir unterhalten uns mit den Nachbarn.
+sich unterhalten|über|A|to chat about|Wir unterhalten uns über Filme.
+anfangen|mit|D|to start with|Wir fangen mit der ersten Übung an.
+aufhören|mit|D|to stop (doing)|Er hört mit dem Rauchen auf.
+träumen|von|D|to dream of|Sie träumt von einer Weltreise.
+erzählen|von|D|to tell about|Erzähl mir von deinem Urlaub!
+berichten|über|A|to report on|Die Zeitung berichtet über die Wahl.
+sich konzentrieren|auf|A|to concentrate on|Ich konzentriere mich auf die Prüfung.
+sich vorbereiten|auf|A|to prepare for|Wir bereiten uns auf den Test vor.
+sich anmelden|für|A|to register for|Ich melde mich für den Kurs an.
+sich entscheiden|für|A|to decide on|Er entscheidet sich für das rote Fahrrad.
+sich bedanken|für|A|to say thanks for|Ich bedanke mich für die Einladung.
+sich bedanken|bei|D|to thank (someone)|Ich bedanke mich bei meiner Lehrerin.
+sich entschuldigen|für|A|to apologise for|Ich entschuldige mich für die Verspätung.
+sich entschuldigen|bei|D|to apologise to|Er entschuldigt sich bei seiner Kollegin.
+gehören|zu|D|to be part of|Das gehört zu meinen Aufgaben.
+passen|zu|D|to go with, suit|Die Jacke passt gut zu der Hose.
+abhängen|von|D|to depend on|Das hängt vom Wetter ab.
+halten|von|D|to think of (opinion)|Was hältst du von der Idee?
+sich verlassen|auf|A|to rely on|Du kannst dich auf mich verlassen.
+achten|auf|A|to pay attention to|Achte auf die Großschreibung!
+sich sorgen|um|A|to worry about|Sie sorgt sich um ihre Gesundheit.
+sich erholen|von|D|to recover from|Ich muss mich vom Stress erholen.
+diskutieren|über|A|to discuss|Wir diskutieren über Politik.
+sich informieren|über|A|to find out about|Ich informiere mich über das Kursangebot.
+sich verlieben|in|A|to fall in love with|Er hat sich in die Stadt verliebt.
+glauben|an|A|to believe in|Glaubst du an Glück?
+arbeiten|an|D|to work on|Sie arbeitet an einem neuen Projekt.
+schreiben|an|A|to write to|Ich schreibe an die Firma.
+sich wundern|über|A|to be surprised at|Ich wundere mich über seine Antwort.
+sich streiten|mit|D|to argue with|Die Kinder streiten sich mit den Nachbarn.
+arbeiten|bei|D|to work at (a company)|Sie arbeitet bei einem Verlag.
+arbeiten|als|N|to work as|Er arbeitet als Redakteur.
+arbeiten|mit|D|to work with|Ich arbeite gern mit meinen Kollegen.
+arbeiten|für|A|to work for|Sie arbeitet für eine große Firma.
+verfügen|über|A|to have (at one's disposal)|Er verfügt über gute Sprachkenntnisse.
+zählen|zu|D|to count among|Sie zählt zu den besten Spielerinnen.
+beitragen|zu|D|to contribute to|Jeder kann zum Umweltschutz beitragen.
+sich engagieren|für|A|to be committed to|Sie engagiert sich für die Umwelt.
+sich eignen|für|A|to be suitable for|Das Buch eignet sich für Anfänger.
+sich wenden|an|A|to turn to (for help)|Wenden Sie sich an die Rezeption.
+sich handeln|um|A|to be about|Es handelt sich um ein Missverständnis.
+sich bemühen|um|A|to try to get|Er bemüht sich um eine bessere Note.`;
+
+// verb | case(s) | English | example  (Kap. 10: Verben mit direktem Kasus)
+const VCASE=`helfen|D|to help|Ich helfe meinem Bruder.
+danken|D|to thank|Ich danke dir für die Hilfe.
+gefallen|D|to please (be liked by)|Die Stadt gefällt mir sehr.
+gehören|D|to belong to|Das Buch gehört meiner Freundin.
+gratulieren|D|to congratulate|Wir gratulieren dir zum Geburtstag.
+antworten|D|to answer|Sie antwortet dem Lehrer.
+folgen|D|to follow|Folgen Sie mir bitte!
+glauben|D|to believe (someone)|Ich glaube dir nicht.
+passen|D|to fit, suit|Die Schuhe passen mir nicht.
+schmecken|D|to taste good (to)|Das Essen schmeckt den Kindern.
+fehlen|D|to be missing (to)|Meine Familie fehlt mir.
+vertrauen|D|to trust|Ich vertraue meinen Kollegen.
+zuhören|D|to listen to|Hör mir bitte zu!
+begegnen|D|to come across, meet|Gestern bin ich einem alten Freund begegnet.
+widersprechen|D|to contradict|Er widerspricht seiner Chefin.
+raten|D|to advise|Ich rate dir, mehr zu schlafen.
+zustimmen|D|to agree with|Ich stimme dir zu.
+schaden|D|to harm|Rauchen schadet der Gesundheit.
+geben|DA|to give (sb. sth.)|Ich gebe dem Kind einen Apfel.
+schenken|DA|to give as a present|Er schenkt seiner Mutter Blumen.
+zeigen|DA|to show|Zeig mir bitte die Fotos!
+schicken|DA|to send|Ich schicke dir eine E-Mail.
+erklären|DA|to explain|Die Lehrerin erklärt uns die Grammatik.
+empfehlen|DA|to recommend|Ich empfehle Ihnen das Museum.
+leihen|DA|to lend|Kannst du mir dein Fahrrad leihen?
+erzählen|DA|to tell|Er erzählt den Kindern eine Geschichte.
+anbieten|DA|to offer|Darf ich Ihnen einen Kaffee anbieten?
+erlauben|DA|to allow|Die Eltern erlauben ihm das Konzert.
+bringen|DA|to bring|Bring mir bitte das Buch!
+fragen|A|to ask (someone)|Ich frage den Lehrer.
+anrufen|A|to phone|Ich rufe dich morgen an.
+besuchen|A|to visit|Wir besuchen unsere Großeltern.
+unterstützen|A|to support|Er unterstützt seine Kollegen.
+kosten|A|to cost|Das kostet mich viel Zeit.
+treffen|A|to meet|Ich treffe meinen Freund im Café.`;
+
+// adjective | preposition | case | English | example  (Kap. 11: Adjektive mit Präpositionen)
+const APREP=`stolz|auf|A|proud of|Sie ist stolz auf ihren Sohn.
+zufrieden|mit|D|satisfied with|Ich bin mit dem Ergebnis zufrieden.
+interessiert|an|D|interested in|Er ist an Politik interessiert.
+verantwortlich|für|A|responsible for|Wer ist für das Projekt verantwortlich?
+abhängig|von|D|dependent on|Das ist abhängig vom Preis.
+bekannt|für|A|known for|Jena ist für seine Universität bekannt.
+begeistert|von|D|enthusiastic about|Wir sind von der Stadt begeistert.
+böse|auf|A|angry with|Bist du noch böse auf mich?
+enttäuscht|von|D|disappointed with|Ich bin von dem Film enttäuscht.
+froh|über|A|glad about|Sie ist froh über die gute Nachricht.
+neugierig|auf|A|curious about|Ich bin neugierig auf das Ergebnis.
+gespannt|auf|A|eager to see|Wir sind gespannt auf die Wahl.
+verheiratet|mit|D|married to|Sie ist mit einem Italiener verheiratet.
+überzeugt|von|D|convinced of|Er ist von seiner Idee überzeugt.
+typisch|für|A|typical of|Das ist typisch für Berlin.
+wichtig|für|A|important for|Sport ist wichtig für die Gesundheit.
+bereit|zu|D|ready for|Ich bin zu einem Kompromiss bereit.
+fertig|mit|D|finished with|Bist du mit der Arbeit fertig?
+freundlich|zu|D|friendly to|Er ist immer freundlich zu den Gästen.
+verliebt|in|A|in love with|Sie ist in ihren Nachbarn verliebt.
+zuständig|für|A|in charge of|Frau Weber ist für die Kurse zuständig.`;
+
+// short English meanings for verbs (own translations)
+const GLOSS={};`abbauen=to reduce, dismantle
+abbrechen=to break off, cancel
+abgeben=to hand in, give away
+abhängen=to depend (on)
+ablösen=to replace, take over from
+abnehmen=to decrease; to lose weight
+abschließen=to finish, complete; to lock
+abschneiden=to cut off
+achten=to pay attention (to)
+aktivieren=to activate
+ändern=to change
+anfangen=to begin, start
+ankommen=to arrive
+anmelden=to register, sign up
+anpassen=to adapt, adjust
+anregen=to stimulate, encourage
+anschließen=to connect; to join
+ansprechen=to speak to, address
+anwenden=to apply, use
+anziehen=to put on (clothes); to attract
+arbeiten=to work
+ärgern=to annoy (sich ärgern: to be annoyed)
+aufbauen=to build up, set up
+aufhören=to stop
+aufklären=to solve (a crime); to inform
+aufnehmen=to take in; to record
+ausfüllen=to fill in (a form)
+ausladen=to unload; to uninvite
+ausleihen=to borrow, lend
+ausrauben=to rob
+ausruhen=to rest (sich ausruhen)
+ausstrahlen=to broadcast; to radiate
+austauschen=to exchange
+beantworten=to answer
+bearbeiten=to work on, edit
+bedanken=to thank (sich bedanken)
+befinden=to be located (sich befinden)
+befördern=to transport; to promote
+begrüßen=to greet, welcome
+beitragen=to contribute
+bekommen=to get, receive
+bemühen=to try hard (sich bemühen)
+benutzen=to use
+berichten=to report
+beschäftigen=to occupy (sich beschäftigen: to deal with)
+beschreiben=to describe
+beschweren=to complain (sich beschweren)
+besichtigen=to visit, view (sights)
+besiegen=to defeat
+bestimmen=to determine, decide
+bestreuen=to sprinkle
+bevorzugen=to prefer
+bewegen=to move (sich bewegen: to exercise)
+beweisen=to prove
+bewerben=to apply (sich bewerben)
+bewerten=to rate, assess
+bezahlen=to pay
+bilden=to form, educate
+blättern=to leaf through
+brauchen=to need
+buchen=to book
+darstellen=to present, depict
+desinfizieren=to disinfect
+dienen=to serve
+diskutieren=to discuss
+dokumentieren=to document
+durchführen=to carry out
+dürfen=may, to be allowed to
+eignen=to be suitable (sich eignen)
+einatmen=to breathe in
+einbeziehen=to include, involve
+einführen=to introduce
+einkaufen=to shop, buy
+einläuten=to ring in, herald
+einprägen=to memorise (sich etwas einprägen)
+einreichen=to submit, hand in
+einrichten=to furnish, set up
+einschreiben=to enrol, register
+einsetzen=to use, deploy; to insert
+eintragen=to enter (in a list)
+empfangen=to receive
+empfinden=to feel, perceive
+engagieren=to be committed (sich engagieren)
+entdecken=to discover
+entschärfen=to defuse, ease
+entschuldigen=to apologise (sich entschuldigen)
+entspannen=to relax
+entstehen=to come into being, arise
+entwerfen=to design, draft
+entwickeln=to develop
+erfahren=to find out, learn
+erforschen=to research, explore
+erfüllen=to fulfil
+erhalten=to receive
+erholen=to recover, relax (sich erholen)
+erinnern=to remind (sich erinnern: to remember)
+erkennen=to recognise
+erleben=to experience
+erledigen=to get done, deal with
+ernähren=to feed (sich ernähren: to eat)
+ernennen=to appoint
+erreichen=to reach, achieve
+erscheinen=to appear; to be published
+erstellen=to create, produce
+erweitern=to expand, extend
+erzielen=to achieve
+faulenzen=to laze around
+feiern=to celebrate
+fernsehen=to watch TV
+fördern=to support, fund
+freuen=to please (sich freuen: to be happy)
+frisieren=to style (hair)
+fühlen=to feel
+führen=to lead, run
+gelangen=to reach, get to
+gelten=to be considered; to be valid
+genießen=to enjoy
+geraten=to get into (a situation)
+gewöhnen=to get used to (sich gewöhnen)
+greifen=to grab, reach for
+gründen=to found
+halten=to hold; to stop
+handeln=to act; to trade (sich handeln um: to be about)
+hassen=to hate
+herunterladen=to download
+hervorheben=to emphasise
+hinterlassen=to leave (behind)
+hören=to hear, listen
+ignorieren=to ignore
+informieren=to inform
+intensivieren=to intensify
+interessieren=to interest (sich interessieren: to be interested)
+kämpfen=to fight
+klassifizieren=to classify
+kochen=to cook
+kommunizieren=to communicate
+können=can, to be able to
+konstruieren=to construct
+konzentrieren=to concentrate (sich konzentrieren)
+konzipieren=to design, conceive
+kritisieren=to criticise
+kümmern=to take care (sich kümmern)
+lächeln=to smile
+lassen=to let; to leave
+leben=to live
+legen=to lay, put
+leiden=to suffer
+leiten=to lead, manage
+lernen=to learn
+lindern=to relieve, ease
+loben=to praise
+lösen=to solve
+machen=to make, do
+mieten=to rent
+mitnehmen=to take along
+mögen=to like
+müssen=must, to have to
+nachdenken=to think about, reflect
+nicken=to nod
+nutzen=to use
+orientieren=to orient (sich orientieren: to find one's way)
+prägen=to shape, influence
+präsentieren=to present
+produzieren=to produce
+profitieren=to benefit
+rauchen=to smoke
+reduzieren=to reduce
+reparieren=to repair
+retten=to save, rescue
+revolutionieren=to revolutionise
+rufen=to call
+salzen=to salt
+sammeln=to collect
+schaffen=to manage; to create
+schauen=to look
+schiefgehen=to go wrong
+schließen=to close
+schonen=to protect, go easy on
+schützen=to protect
+setzen=to put, place (sich setzen: to sit down)
+sichern=to secure, save
+sinken=to sink, fall
+sorgen=to take care; to worry
+sperren=to block, close
+spezialisieren=to specialise (sich spezialisieren)
+spielen=to play
+stärken=to strengthen
+streiten=to argue
+studieren=to study (at university)
+suchen=to look for
+tanken=to fill up (with fuel)
+teilnehmen=to take part
+trainieren=to train, practise
+träumen=to dream
+treiben=to drive; to do (sports)
+überlegen=to consider, think over
+übernachten=to stay overnight
+übernehmen=to take over
+überqueren=to cross
+überraschen=to surprise
+überschreiben=to title; to overwrite
+überstehen=to get through, survive
+überzeugen=to convince
+umgehen=to deal with, handle
+umrühren=to stir
+umsetzen=to put into practice
+unterbrechen=to interrupt
+unterbreiten=to submit, present (a proposal)
+unterhalten=to entertain (sich unterhalten: to chat)
+unterrichten=to teach
+unterzeichnen=to sign
+verabreden=to arrange to meet (sich verabreden)
+verändern=to change
+verarbeiten=to process
+verbessern=to improve
+verbeugen=to bow (sich verbeugen)
+verbinden=to connect, combine
+verbringen=to spend (time)
+verdienen=to earn; to deserve
+vereinbaren=to arrange, agree
+vereinheitlichen=to standardise
+vererben=to pass on, bequeath
+verfolgen=to follow, pursue
+verfügen=to have (at one's disposal)
+verhaften=to arrest
+verkaufen=to sell
+verlängern=to extend
+verlassen=to leave
+verlieben=to fall in love (sich verlieben)
+vermeiden=to avoid
+vermissen=to miss
+verraten=to reveal; to betray
+verrühren=to mix, stir
+versorgen=to supply, provide for
+verspäten=to be late (sich verspäten)
+vertreten=to represent
+verursachen=to cause
+visualisieren=to visualise
+vorbereiten=to prepare
+vorweisen=to show, present
+wandern=to hike
+warnen=to warn
+warten=to wait
+weiterbilden=to train further (sich weiterbilden)
+weitergeben=to pass on
+wenden=to turn (sich wenden an: to turn to)
+werben=to advertise
+widmen=to dedicate
+wiederholen=to repeat, revise
+wirken=to have an effect; to seem
+wollen=to want
+wundern=to surprise (sich wundern: to be surprised)
+zahlen=to pay
+zählen=to count
+zeichnen=to draw
+zerplatzen=to burst
+zurückfahren=to drive back
+zurücklegen=to cover (a distance); to put back`.split("\n").forEach(l=>{const i=l.indexOf("=");GLOSS[l.slice(0,i)]=l.slice(i+1)});
+const CASE={A:"Akk",D:"Dat",G:"Gen",N:"Nom",DA:"Dat + Akk"};
+const CASELONG={A:"Akkusativ",D:"Dativ",G:"Genitiv",N:"Nominativ",DA:"Dativ + Akkusativ"};
+
+/* ---------- STORAGE ---------- */
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let boxes=LS.get("wk_boxes",{});
+let custom=LS.get("wk_custom",[]);
+
+/* ---------- HELPERS ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const norm=s=>String(s).toLowerCase().trim().replace(/\s+/g," ").replace(/[.!?]+$/,"");
+const fold=s=>norm(s).replace(/ä/g,"ae").replace(/ö/g,"oe").replace(/ü/g,"ue").replace(/ß/g,"ss");
+
+function parseLine(line){
+  line=line.replace(/ /g," ").trim();
+  const m=line.match(/^(.+?)\s*=\s*(.+)$/)||line.match(/^(.+?)\t+(.+)$/)||line.match(/^(.+?)\s+[–—-]\s+(.+)$/)||line.match(/^(.+?\S)\s{2,}(\S.*)$/); if(!m) return null;
+  const left=m[1].trim(), en=m[2].trim();
+  const a=left.match(/^(der|die|das)\s+([^,]+?)(?:\s*,\s*(.+))?$/i);
+  if(a) return {art:a[1].toLowerCase(),w:a[2].trim(),pl:(a[3]||"").trim(),en,kind:"n"};
+  return {art:"",w:left,pl:"",en,kind:"x"};
+}
+const BASE=[];
+BOOK.forEach(([ch,topic,topicEn,items])=>items.forEach(([de,en])=>BASE.push({ch,topic,topicEn,art:"",w:de,pl:"",en,kind:"x",key:"b:"+ch+":"+de})));
+function topicsOf(ch){return [...new Set(BOOK.filter(b=>b[0]===ch).map(b=>b[1]))]}
+const VLIST=VERBS.trim().split("\n").map(l=>{const [v,p3,pr,pf,en]=l.split("|");return {v,p3,pr,pf,en}});
+const PLIST=VPREP.trim().split("\n").map(l=>{const [v,p,c,en,ex]=l.split("|");return {v,p,c,en,ex}});
+const CLIST=VCASE.trim().split("\n").map(l=>{const [v,c,en,ex]=l.split("|");return {v,c,en,ex}});
+const ALIST=APREP.trim().split("\n").map(l=>{const [v,p,c,en,ex]=l.split("|");return {v,p,c,en,ex}});
+
+function allWords(){return BASE.concat(custom.map(c=>({...c,own:true,topic:"Meine Wörter",key:"e:"+c.id})))}
+function wordsFor(sel){const all=allWords();if(sel==="all")return all;if(sel==="E")return all.filter(w=>w.own);return all.filter(w=>w.ch===sel)}
+function artHTML(w){return w.art?`<span class="art art-${w.art}">${w.art}</span> ${esc(w.w)}`:esc(w.w)}
+function deText(w){return (w.art?w.art+" ":"")+w.w.replace(/\s*\(Pl\.\)/,"")}
+function caseTag(c){return c==="DA"?`<span class="case c-D">Dat</span> <span class="case c-A">Akk</span>`:`<span class="case c-${c}">${CASE[c]}</span>`}
+/* ---------- VERB ENGINE: forms + Rektion ---------- */
+const STRONG=`backen|bäckt|backte|gebacken|h
+befehlen|befiehlt|befahl|befohlen|h
+beginnen|beginnt|begann|begonnen|h
+beißen|beißt|biss|gebissen|h
+bieten|bietet|bot|geboten|h
+binden|bindet|band|gebunden|h
+bitten|bittet|bat|gebeten|h
+bleiben|bleibt|blieb|geblieben|s
+braten|brät|briet|gebraten|h
+brechen|bricht|brach|gebrochen|h
+brennen|brennt|brannte|gebrannt|h
+bringen|bringt|brachte|gebracht|h
+denken|denkt|dachte|gedacht|h
+dürfen|darf|durfte|gedurft|h
+empfehlen|empfiehlt|empfahl|empfohlen|h
+essen|isst|aß|gegessen|h
+fahren|fährt|fuhr|gefahren|s
+fallen|fällt|fiel|gefallen|s
+fangen|fängt|fing|gefangen|h
+finden|findet|fand|gefunden|h
+fliegen|fliegt|flog|geflogen|s
+fliehen|flieht|floh|geflohen|s
+fließen|fließt|floss|geflossen|s
+frieren|friert|fror|gefroren|h
+geben|gibt|gab|gegeben|h
+gehen|geht|ging|gegangen|s
+gelingen|gelingt|gelang|gelungen|s
+gelten|gilt|galt|gegolten|h
+genießen|genießt|genoss|genossen|h
+geschehen|geschieht|geschah|geschehen|s
+gewinnen|gewinnt|gewann|gewonnen|h
+gießen|gießt|goss|gegossen|h
+gleichen|gleicht|glich|geglichen|h
+greifen|greift|griff|gegriffen|h
+haben|hat|hatte|gehabt|h
+halten|hält|hielt|gehalten|h
+hängen|hängt|hing|gehangen|h
+heben|hebt|hob|gehoben|h
+heißen|heißt|hieß|geheißen|h
+helfen|hilft|half|geholfen|h
+kennen|kennt|kannte|gekannt|h
+klingen|klingt|klang|geklungen|h
+kommen|kommt|kam|gekommen|s
+können|kann|konnte|gekonnt|h
+laden|lädt|lud|geladen|h
+lassen|lässt|ließ|gelassen|h
+laufen|läuft|lief|gelaufen|s
+leiden|leidet|litt|gelitten|h
+leihen|leiht|lieh|geliehen|h
+lesen|liest|las|gelesen|h
+liegen|liegt|lag|gelegen|h
+lügen|lügt|log|gelogen|h
+messen|misst|maß|gemessen|h
+mögen|mag|mochte|gemocht|h
+müssen|muss|musste|gemusst|h
+nehmen|nimmt|nahm|genommen|h
+nennen|nennt|nannte|genannt|h
+raten|rät|riet|geraten|h
+reißen|reißt|riss|gerissen|h
+reiten|reitet|ritt|geritten|s
+rennen|rennt|rannte|gerannt|s
+riechen|riecht|roch|gerochen|h
+rufen|ruft|rief|gerufen|h
+scheiden|scheidet|schied|geschieden|h
+scheinen|scheint|schien|geschienen|h
+schieben|schiebt|schob|geschoben|h
+schießen|schießt|schoss|geschossen|h
+schlafen|schläft|schlief|geschlafen|h
+schlagen|schlägt|schlug|geschlagen|h
+schließen|schließt|schloss|geschlossen|h
+schneiden|schneidet|schnitt|geschnitten|h
+schreiben|schreibt|schrieb|geschrieben|h
+schreien|schreit|schrie|geschrien|h
+schweigen|schweigt|schwieg|geschwiegen|h
+schwimmen|schwimmt|schwamm|geschwommen|s
+schwinden|schwindet|schwand|geschwunden|s
+sehen|sieht|sah|gesehen|h
+sein|ist|war|gewesen|s
+singen|singt|sang|gesungen|h
+sinken|sinkt|sank|gesunken|s
+sitzen|sitzt|saß|gesessen|h
+sollen|soll|sollte|gesollt|h
+sprechen|spricht|sprach|gesprochen|h
+springen|springt|sprang|gesprungen|s
+stehen|steht|stand|gestanden|h
+stehlen|stiehlt|stahl|gestohlen|h
+steigen|steigt|stieg|gestiegen|s
+sterben|stirbt|starb|gestorben|s
+stoßen|stößt|stieß|gestoßen|h
+streiten|streitet|stritt|gestritten|h
+tragen|trägt|trug|getragen|h
+treffen|trifft|traf|getroffen|h
+treiben|treibt|trieb|getrieben|h
+treten|tritt|trat|getreten|s
+trinken|trinkt|trank|getrunken|h
+tun|tut|tat|getan|h
+vergessen|vergisst|vergaß|vergessen|h
+verlieren|verliert|verlor|verloren|h
+verzeihen|verzeiht|verzieh|verziehen|h
+wachsen|wächst|wuchs|gewachsen|s
+waschen|wäscht|wusch|gewaschen|h
+weisen|weist|wies|gewiesen|h
+werben|wirbt|warb|geworben|h
+werden|wird|wurde|geworden|s
+werfen|wirft|warf|geworfen|h
+wissen|weiß|wusste|gewusst|h
+wollen|will|wollte|gewollt|h
+ziehen|zieht|zog|gezogen|h
+zwingen|zwingt|zwang|gezwungen|h`;
+const STR={};STRONG.split("\n").forEach(l=>{const [v,p3,pr,pp,a]=l.split("|");STR[v]={p3,pr,pp,aux:a==="s"?"ist":"hat"}});
+const REG=new Set(`bereiten begleiten verbreiten achten antworten arbeiten atmen baden bauen bessern bilden brauchen danken decken deuten dienen drehen drucken drücken ehren enden fassen fehlen feiern folgen fragen freuen fühlen führen füllen fürchten glauben gründen grüßen handeln hassen heiraten heizen hindern hoffen holen hören kämpfen kaufen kehren klären kleben klingeln klopfen kochen kosten kümmern kündigen lachen landen leben legen lehnen leiten lernen lieben lohnen lösen machen malen melden merken mieten mischen nutzen nützen öffnen ordnen packen parken passen pflegen planen probieren prüfen putzen rauchen räumen rechnen reden regnen reichen reisen retten richten rühren sagen sammeln schalten schätzen schauen schenken schicken schmecken setzen sorgen sparen spielen spülen starten stecken stellen steuern stimmen stören suchen tanzen tauschen teilen trauen träumen trennen trocknen üben wachen wählen wandern warnen warten wechseln wecken weinen wirken wohnen wünschen wundern zahlen zählen zeichnen zeigen zielen`.split(" "));
+const SEP="zurück zusammen weiter vorbei heraus herein hinaus herunter hinunter kennen spazieren statt teil fest fern frei fort nieder los mit nach vor weg dar zu ab an auf aus bei ein her hin um durch".split(" ");
+const INSEP="miss emp zer ent ver be ge er über unter hinter wider".split(" ");
+const AUX_S=new Set("aufstehen entstehen einschlafen aufwachen verschwinden begegnen verreisen erscheinen vergehen entkommen umziehen gelingen passieren reisen wandern folgen landen".split(" "));
+const AUX_H=new Set("bekommen verstehen".split(" "));
+const isVerb=v=>!!(STR[v]||REG.has(v));
+const NOGE_EXC=new Set(["beten","beben","erben","ernten","gehen"]);
+function regForms(v,noGe){
+  if(!noGe&&!NOGE_EXC.has(v)&&/^(be|ver|zer|ent|emp|miss|er|ge)[a-zäöüß]{3,}$/.test(v))noGe=true;
+  const stem=/[^e]n$/.test(v)&&/(el|er)n$/.test(v)?v.slice(0,-1):v.replace(/e?n$/,"");
+  const e=/[td]$/.test(stem)||/[^aeiouäöülrhmn][mn]$/.test(stem)?"e":"";
+  const ie=/ieren$/.test(v);
+  return {p3:stem+e+"t",pr:stem+e+"te",pp:(noGe||ie?"":"ge")+stem+e+"t",aux:"hat"};
+}
+function core(v,depth){
+  if(STR[v])return {...STR[v]};
+  if(REG.has(v))return regForms(v);
+  if(depth<2)for(const p of SEP)if(v.startsWith(p)&&v.length>p.length+2){const r=v.slice(p.length);if(isVerb(r)||(depth<1&&INSEP.some(q=>r.startsWith(q)&&isVerb(r.slice(q.length))))){const b=core(r,depth+1);return {p3:b.p3+" "+p,pr:b.pr+" "+p,pp:p+b.pp,aux:b.aux,sep:p}}}
+  for(const q of INSEP)if(v.startsWith(q)&&v.length>q.length+2){const r=v.slice(q.length);if(isVerb(r)){const b=STR[r]?{...STR[r]}:regForms(r);return {p3:q+b.p3,pr:q+b.pr,pp:q+b.pp.replace(/^ge/,""),aux:"hat"}}}
+  return regForms(v);
+}
+function verbForms(inf){
+  const v=inf.replace(/^sich\s+/,"");
+  const known=VLIST.find(x=>x.v===v);
+  if(known)return {p3:known.p3,pr:known.pr,pf:known.pf,src:"list"};
+  const f=core(v,0);let aux=f.aux;if(AUX_S.has(v))aux="ist";if(AUX_H.has(v))aux="hat";
+  return {p3:f.p3,pr:f.pr,pf:aux+" "+f.pp,src:"auto"};
+}
+
+/* case labels for prepositions inside phrases */
+const FIX={durch:"A",für:"A",gegen:"A",ohne:"A",um:"A",bis:"A",ins:"A",ans:"A",aufs:"A",aus:"D",bei:"D",beim:"D",mit:"D",nach:"D",seit:"D",von:"D",vom:"D",zu:"D",zum:"D",zur:"D",gegenüber:"D",ab:"D",im:"D",am:"D",zufolge:"D",laut:"D",wegen:"G",trotz:"G",während:"G",statt:"G",anstatt:"G",innerhalb:"G",außerhalb:"G",aufgrund:"G",als:"N"};
+const CONTR=new Set(["ins","ans","aufs","beim","vom","zum","zur","im","am"]);
+const WECHSEL=new Set(["an","auf","in","über","unter","vor","hinter","neben","zwischen"]);
+const DET_D=/^(dem|einem|meinem|deinem|seinem|ihrem|unserem|eurem|keinem|diesem|jedem|der|einer|meiner|deiner|seiner|ihrer|unserer|eurer|keiner|dieser|jeder)$/;
+const DET_A=/^(das|ein|die|eine|einen|mein|meine|dein|deine|sein|seine|ihre|unsere|kein|keine|dieses|diese|jedes|jede|alle|sich|mich|dich|uns|euch)$/;
+const DET_ANY=/^(den|dem|der|die|das|des|ein|eine|einen|einem|einer|eines|mein\w*|dein\w*|sein\w*|ihr\w*|unser\w*|euer\w*|kein\w*|dies\w*|jed\w*|alle\w*|sich|mich|dich|mir|dir|uns|euch|ihm|ihn|etwas|\d.*)$/;
+function rektionFor(prep,words){
+  for(const w of words){const v=w.toLowerCase();
+    const p=PLIST.find(x=>x.p===prep&&x.v.replace(/^sich /,"")===v);if(p)return p.c;
+    const a=ALIST.find(x=>x.p===prep&&x.v===v);if(a)return a.c}
+  return null;
+}
+function annot(de){
+  const parts=de.split(/(\s+|\/)/);const words=parts.filter(p=>p&&!/^(\s+|\/)$/.test(p)).map(p=>p.replace(/[^\wäöüÄÖÜß]/g,""));
+  const tail=words.slice(-3).reverse();
+  let wi=-1;
+  return parts.map(p=>{
+    if(!p||/^(\s+|\/)$/.test(p))return esc(p);
+    wi++;const m=p.match(/^(\(?)([A-Za-zäöüÄÖÜß]+)(.*)$/);if(!m)return esc(p);
+    const w=m[2],lw=w.toLowerCase();if(w!==lw&&!(wi===0&&(FIX[lw]||WECHSEL.has(lw))))return esc(p);
+    const nxt=(words[wi+1]||"");const nraw=parts.filter(x=>x&&!/^(\s+|\/)$/.test(x))[wi+1]||"";
+    const nounish=/^\(/.test(nraw)||/^[A-ZÄÖÜ]/.test(nxt)||DET_ANY.test(nxt.toLowerCase());
+    let c=null;
+    if(lw==="zufolge")c="D";
+    else if(FIX[lw]&&(CONTR.has(lw)||nounish))c=rektionFor(lw,tail)||FIX[lw];
+    else if(WECHSEL.has(lw)&&nounish){c=rektionFor(lw,tail);if(!c){const d=nxt.toLowerCase();c=DET_D.test(d)?"D":DET_A.test(d)?"A":null}}
+    if(!c)return esc(p);
+    return `${esc(m[1])}<span class="pp c-${c}" title="${esc(w)} + ${CASELONG[c]||CASE[c]}">${esc(w)}<sub>${CASE[c]}</sub></span>${esc(m[3])}`;
+  }).join("");
+}
+const NOT_INF=new Set(["gesehen","verloren","würden","jemanden","einen","ihnen","sonstigen","anderen","eigenen","allen","guten","neuen","seinen","meinen","keinen","diesen","jeden"]);
+function phraseVerb(de){const t=de.replace(/[.!?…)\]]+$/,"").split(/\s+/).pop().replace(/^.*\//,"").replace(/[.,!?…:;)\]]+$/,"");return /^[a-zäöüß]{3,}n$/.test(t)&&!NOT_INF.has(t)?t:null}
+
+/* verb profile for search */
+function verbType(inf){
+  const v=inf.replace(/^sich\s+/,"");const f=verbForms(v);
+  const [m3,...rest]=f.p3.split(" "),part=rest.join(" ");
+  const c=part&&v.startsWith(part)?v.slice(part.length):v;
+  const pr=f.pr.split(" ")[0],pp=f.pf.split(" ").slice(1).join(" ");
+  const r=regForms(c);
+  const regPP=(part||"")+r.pp;
+  if(pr===r.pr&&pp===regPP)return "reg";
+  if(pr===r.pr&&pp.replace(/^ge/,"")===regPP.replace(/^ge/,""))return "reg";
+  return /te$/.test(pr)?"mix":"irr";
+}
+const VT={reg:["regelmäßig","-te · ge…t"],irr:["unregelmäßig","Vokalwechsel · ge…en"],mix:["gemischt","Vokalwechsel + -te"]};
+function vtBadge(v){const t=verbType(v);return `<span class="vt vt-${t}" title="${VT[t][1]}">${VT[t][0]}</span>`}
+/* ---------- CONJUGATION ---------- */
+const PERS=["ich","du","er/sie/es","wir","ihr","sie","Sie"];
+const PRES_IRR={sein:["bin","bist","ist","sind","seid","sind"],haben:["habe","hast","hat","haben","habt","haben"],werden:["werde","wirst","wird","werden","werdet","werden"],wissen:["weiß","weißt","weiß","wissen","wisst","wissen"],tun:["tue","tust","tut","tun","tut","tun"],
+  können:["kann","kannst","kann","können","könnt","können"],dürfen:["darf","darfst","darf","dürfen","dürft","dürfen"],müssen:["muss","musst","muss","müssen","müsst","müssen"],mögen:["mag","magst","mag","mögen","mögt","mögen"],wollen:["will","willst","will","wollen","wollt","wollen"],sollen:["soll","sollst","soll","sollen","sollt","sollen"]};
+const AUXC={hat:["habe","hast","hat","haben","habt","haben"],ist:["bin","bist","ist","sind","seid","sind"]};
+const REFL=["mich","dich","sich","uns","euch","sich"];
+const PRON={N:["ich","du","er/sie/es","wir","ihr","sie","Sie"],A:["mich","dich","ihn/sie/es","uns","euch","sie","Sie"],D:["mir","dir","ihm/ihr/ihm","uns","euch","ihnen","Ihnen"]};
+function presentRow(c,main3){
+  if(PRES_IRR[c])return PRES_IRR[c];
+  const eln=/[^e](el|er)n$/.test(c)||/^(el|er)n$/.test(c);
+  const stem=eln?c.slice(0,-1):c.replace(/e?n$/,"");
+  const e=/[td]$/.test(stem)||/[^aeiouäöülrhmn][mn]$/.test(stem)?"e":"";
+  const sib=/(s|ß|z|x)$/.test(stem);
+  const ich=/eln$/.test(c)?stem.replace(/el$/,"le"):stem+"e";
+  let du;
+  if(main3===stem+e+"t"||main3===stem+"t")du=sib?stem+"t":stem+e+"st";
+  else if(/t$/.test(stem)&&!/tet$/.test(main3))du=main3+"st";
+  else{const b=main3.replace(/t$/,"");du=/(s|ß|z|x)$/.test(b)?b+"t":b+"st"}
+  return [ich,du,main3,c,stem+e+"t",c];
+}
+function pastRow(pr){
+  if(/e$/.test(pr))return [pr,pr+"st",pr,pr+"n",pr+"t",pr+"n"];
+  const td=/[td]$/.test(pr),sib=/(s|ß|z)$/.test(pr);
+  return [pr,pr+(td||sib?"est":"st"),pr,pr+"en",pr+(td?"et":"t"),pr+"en"];
+}
+function conjugate(v,refl){
+  const f=verbForms(v);
+  const [m3,...p3rest]=f.p3.split(" "),part=p3rest.join(" ");
+  const c=part&&v.startsWith(part)?v.slice(part.length):v;
+  const pres=presentRow(c,m3),past=pastRow(f.pr.split(" ")[0]);
+  const [aux,...pp]=f.pf.split(" ");const auxr=AUXC[aux]||AUXC.hat;
+  const idx=[0,1,2,3,4,5,5];
+  const rows=PERS.map((p,i)=>{const k=idx[i],r=refl?" "+REFL[k]:"",pa=part?" "+part:"";
+    return {p,pres:`${pres[k]}${r}${pa}`,past:`${past[k]}${r}${pa}`,perf:`${auxr[k]}${r} ${pp.join(" ")}`}});
+  return {rows,src:f.src};
+}
+function conjHTML(v,cj,refl){
+  const f=verbForms(v),r=refl?"sich ":"";
+  const [aux,...pp]=f.pf.split(" ");
+  const tenses=[["pres","Präsens",`${r}${v}`,`er ${f.p3}`],["past","Präteritum",f.pr,"er …"],["perf","Perfekt",pp.join(" "),`er ${aux} …`]];
+  const lists=tenses.map(([k])=>`<div class="tlist" data-tl="${k}" hidden>${cj.rows.map(x=>`<div class="trow"><span class="tp">${esc(x.p)}${x.p==="Sie"?' <span class="note">formell</span>':x.p==="sie"?' <span class="note">Pl.</span>':""}</span><span class="tf">${esc(x[k])}</span></div>`).join("")}</div>`).join("");
+  return `<div class="tbtns">${tenses.map(([k,l,big,small])=>`<button class="tbtn" data-t="${k}" aria-pressed="false"><span class="label">${l}</span><b>${esc(big)}</b><span class="note">${esc(small)}</span></button>`).join("")}</div>${lists}${cj.src==="auto"?`<p class="note" style="margin:8px 0 0">Formen nach den Regeln gebildet. Bei seltenen Verben im Wörterbuch prüfen.</p>`:""}`;
+}
+function pronLine(prep,c){
+  if(!PRON[c]||c==="N")return "";
+  const pre=prep?prep+" ":"";
+  return `<div class="pron c-${c}">${PRON[c].map(x=>esc(pre+x)).join(" · ")}</div>`;
+}
+
+/* ---------- DETAIL POPUP CONTENT ---------- */
+function bookList(word){
+  const re=new RegExp(`(^|[\\s/(])${word}([\\s/.,)!?]|$)`);
+  return BASE.filter(w=>re.test(w.w));
+}
+function bookHTML(book){return book.length?`<section class="msec"><h4>Im Buch <span class="count">${book.length}</span></h4>${book.map(w=>`<div class="vrow"><div>${annot(w.w)}</div><div class="en">${esc(w.en)}</div><div class="note">${esc(srcOf(w))}</div></div>`).join("")}</section>`:""}
+function headHTML(kind,title,en){return `<header class="mhead"><div><span class="label hl">${kind}</span><h3 id="mtitle">${esc(title)}</h3>${en?`<div class="en">${esc(en)}</div>`:""}</div><button class="x" id="closeProf" aria-label="Schließen">×</button></header>`}
+function adjProfile(a){
+  const rows=ALIST.filter(x=>x.v===a);if(!rows.length)return "";
+  return headHTML("Adjektiv",a,rows[0].en)+`<section class="msec"><h4>Präpositionen</h4>${rows.map(x=>`<div class="vrow"><div><b>${esc(x.v)} ${esc(x.p)}</b> + ${caseTag(x.c)}</div><div class="en">${esc(x.en)}</div><div class="ex">${esc(x.ex)}</div>${pronLine(x.p,x.c)}</div>`).join("")}</section>`+bookHTML(bookList(a));
+}
+function verbProfile(q){
+  const raw=norm(q),askedRefl=/^sich\s+/.test(raw);let v=raw.replace(/^sich\s+/,"");
+  const adj=adjProfile(v);if(adj)return adj;
+  if(!/^[a-zäöüß]{3,}n$/.test(v))return "";
+  const book=bookList(v);
+  const rp=PLIST.filter(x=>x.v.replace(/^sich /,"")===v), rc=CLIST.filter(x=>x.v===v), vl=VLIST.find(x=>x.v===v);
+  if(!book.length&&!rp.length&&!rc.length&&!vl&&!isVerb(v)&&!isVerb(v.replace(/^(be|ver|er|ent|zer|ge|emp|miss|ab|an|auf|aus|bei|ein|mit|nach|vor|weg|zu|zurück|um|teil|fest|los)/,"")))return "";
+  const reflOnly=rp.length&&rp.every(x=>x.v.startsWith("sich "))&&!rc.length;
+  const refl=askedRefl||reflOnly;
+  const en=(vl&&vl.en)||GLOSS[v]||(rc[0]&&rc[0].en)||(rp[0]&&rp[0].en)||"";
+  const cj=conjugate(v,refl);
+  const rek=[...rc.map(x=>`<div class="vrow"><div><b>${esc(x.v)}</b> + ${caseTag(x.c)}</div><div class="en">${esc(x.en)}</div><div class="ex">${esc(x.ex)}</div>${pronLine("",x.c==="DA"?"D":x.c)}</div>`),
+             ...rp.map(x=>`<div class="vrow"><div><b>${esc(x.v)} ${esc(x.p)}</b> + ${caseTag(x.c)}</div><div class="en">${esc(x.en)}</div><div class="ex">${esc(x.ex)}</div>${pronLine(x.p,x.c)}</div>`)];
+  return headHTML(`Verb ${vtBadge(v)}`,(refl?"sich ":"")+v,en)+
+  `<section class="msec"><h4>Konjugation${refl?" · reflexiv":""}</h4>${conjHTML(v,cj,refl)}</section>
+   <section class="msec"><h4>Kasus und Präpositionen</h4>${rek.length?rek.join(""):`<p class="note" style="margin:0">Keine feste Präposition. Ein direktes Objekt steht im Akkusativ.</p>${pronLine("","A")}`}</section>`+bookHTML(book);
+}
+
+/* ---------- POPUP ---------- */
+let lastFocus=null;
+function openLook(v){
+  const html=verbProfile(v);if(!html)return;
+  pushRecent("look",v.replace(/^sich /,""));if(tab==="suchen"&&!$("#q").value.trim())setTimeout(renderSearch,0);
+  lastFocus=document.activeElement;
+  $("#mbody").innerHTML=html;$("#modal").hidden=false;document.documentElement.classList.add("lock");
+  $("#mbody").scrollTop=0;$("#closeProf").focus();
+}
+function closeLook(){$("#modal").hidden=true;$("#mbody").innerHTML="";document.documentElement.classList.remove("lock");if(lastFocus&&lastFocus.focus)lastFocus.focus()}
+
+/* ---------- TABS ---------- */
+let tab="lernen";
+function setTab(t){tab=t;document.querySelectorAll("#nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===t));
+  ["lernen","ueben","suchen","grammatik","meine"].forEach(x=>$("#tab-"+x).hidden=x!==t);
+  if(t==="suchen")renderSearch(); if(t==="meine")renderMine(); if(t==="lernen")renderGrid(); LS.set("wk_tab",t);}
+$("#nav").addEventListener("click",e=>{const b=e.target.closest("button");if(b)setTab(b.dataset.tab)});
+
+/* ---------- LERNEN ---------- */
+let sel=LS.get("wk_sel",1), dir=LS.get("wk_dir","de"), session=null;
+function learned(list){return list.filter(w=>(boxes[w.key]||0)>=3).length}
+function renderGrid(){
+  const tiles=CHAPTERS.map((t,i)=>{const n=i+1,l=wordsFor(n),pct=l.length?Math.round(learned(l)/l.length*100):0;
+    return `<button class="ch" data-ch="${n}" aria-pressed="${sel===n}"><div class="row"><b>${n}</b><span title="${esc(t)}">${esc(t)}</span></div><div class="bar"><i style="width:${pct}%"></i></div><small>${learned(l)} / ${l.length} sicher</small></button>`});
+  const own=wordsFor("E"), all=allWords();
+  tiles.push(`<button class="ch" data-ch="all" aria-pressed="${sel==="all"}"><div class="row"><b>∑</b><span>Alle Kapitel</span></div><div class="bar"><i style="width:${Math.round(learned(all)/all.length*100)}%"></i></div><small>${learned(all)} / ${all.length} sicher</small></button>`);
+  if(own.length)tiles.push(`<button class="ch" data-ch="E" aria-pressed="${sel==="E"}"><div class="row"><b>★</b><span>Meine Wörter</span></div><div class="bar"><i style="width:${Math.round(learned(own)/own.length*100)}%"></i></div><small>${learned(own)} / ${own.length} sicher</small></button>`);
+  $("#grid").innerHTML=tiles.join("");
+  if(!session)startSession();
+}
+$("#grid").addEventListener("click",e=>{const b=e.target.closest(".ch");if(!b)return;const v=b.dataset.ch;sel=(v==="all"||v==="E")?v:+v;LS.set("wk_sel",sel);topicSel="";LS.set("wk_topic","");session=null;renderGrid()});
+let topicSel=LS.get("wk_topic","");
+function startSession(){
+  let pool=wordsFor(sel);
+  if(!pool.length){sel=1;pool=wordsFor(1)}
+  if(topicSel){const t=pool.filter(w=>w.topic===topicSel);if(t.length)pool=t;else topicSel=""}
+  pool=shuffle(pool).sort((a,b)=>(boxes[a.key]||0)-(boxes[b.key]||0)).slice(0,20);
+  session={queue:pool,i:0,flipped:false,known:0,again:0,total:pool.length};
+  renderCard();
+}
+function chName(s){return s==="all"?"Alle Kapitel":s==="E"?"Meine Wörter":`Kapitel ${s} · ${CHAPTERS[s-1]}`}
+function renderCard(){
+  const t=$("#trainer");
+  const tps=typeof sel==="number"?topicsOf(sel):[];
+  const top=`<div class="tbar"><div class="chsel"><span class="label">${esc(chName(sel))}</span>${tps.length?`<select id="topicSel" aria-label="Thema"><option value="">Alle Themen</option>${tps.map(t=>`<option${t===topicSel?" selected":""}>${esc(t)}</option>`).join("")}</select>`:""}</div>
+    <div class="seg" id="dirSeg"><button data-d="de" aria-pressed="${dir==="de"}">Deutsch → Englisch</button><button data-d="en" aria-pressed="${dir==="en"}">Englisch → Deutsch</button></div></div>`;
+  if(!session.queue.length){t.innerHTML=top+`<div class="done"><span class="label">Noch keine Karten</span><span class="note">${BOOK.length?"Dieses Kapitel hat noch keine Wörter.":"Lade oben die Buchliste oder füge eigene Wörter unter „Meine Wörter“ hinzu."}</span></div>`;return}
+  if(session.i>=session.queue.length){
+    t.innerHTML=top+`<div class="done"><span class="label">Runde fertig</span><strong>${session.known} / ${session.total}</strong><span class="note">beim ersten Versuch gewusst</span><button class="btn primary" id="again">Neue Runde</button></div>`;
+    $("#again").onclick=()=>{startSession()};renderGridSilent();return;
+  }
+  const w=session.queue[session.i], box=boxes[w.key]||0;
+  const ch=w.own?"Eigenes Wort":"Kap. "+w.ch+" · "+w.topic;
+  const fs=s=>{const n=s.length;return n<28?"":n<70?' style="font-size:clamp(20px,4.6vw,28px)"':' style="font-size:clamp(17px,3.8vw,22px);font-weight:500"'};
+  const frontDe=`<div class="front"${fs(w.w)}>${w.art?artHTML(w):annot(w.w)}</div>${w.pl?`<div class="pl">Pl. ${esc(w.pl)}</div>`:""}`;
+  const frontEn=`<div class="front"${fs(w.en)}>${esc(w.en)}</div>`;
+  const pv=!w.art&&phraseVerb(w.w), look=pv?`<div class="look"><span class="lk" data-v="${esc(pv)}" role="link" tabindex="0">Verb nachschlagen: ${esc(pv)} →</span></div>`:"";
+  const front=dir==="de"?frontDe:frontEn, back=(dir==="de"?`<div class="back">${esc(w.en)}</div>`:`<div class="back">${frontDe}</div>`)+look;
+  t.innerHTML=top+`<button class="icard" id="card" aria-label="Karte umdrehen">
+      <div class="meta"><span class="label">${esc(ch)} · ${session.i+1}/${session.queue.length}</span><span class="boxes" title="Box ${box}/5">${[1,2,3,4,5].map(n=>`<i class="${box>=n?"on":""}"></i>`).join("")}</span></div>
+      ${front}${session.flipped?back:`<div class="hint">Tippen oder Leertaste zum Umdrehen</div>`}
+    </button>
+    <div class="actions"><button class="btn bad" id="no" ${session.flipped?"":"disabled"}>Nochmal</button><button class="btn ok" id="yes" ${session.flipped?"":"disabled"}>Gewusst</button></div>`;
+  $("#card").onclick=e=>{const l=e.target.closest(".lk");if(l){e.stopPropagation();openLook(l.dataset.v);return}session.flipped=!session.flipped;renderCard()};
+  $("#no").onclick=()=>answerCard(false);$("#yes").onclick=()=>answerCard(true);
+}
+$("#trainer").addEventListener("change",e=>{if(e.target.id!=="topicSel")return;topicSel=e.target.value;LS.set("wk_topic",topicSel);startSession()});
+$("#trainer").addEventListener("click",e=>{const b=e.target.closest("#dirSeg button");if(!b)return;dir=b.dataset.d;LS.set("wk_dir",dir);session.flipped=false;renderCard()});
+function answerCard(ok){
+  const w=session.queue[session.i];
+  if(ok){boxes[w.key]=Math.min(5,(boxes[w.key]||0)+1);if(!w._miss)session.known++}
+  else{boxes[w.key]=0;w._miss=true;session.queue.push(w)}
+  LS.set("wk_boxes",boxes);session.i++;session.flipped=false;renderCard();
+}
+function renderGridSilent(){const s=session;renderGrid();session=s}
+
+/* ---------- ÜBEN ---------- */
+const DRILLS={
+  luecke:{name:"Lückentext",desc:"Fehlendes Wort in der Wendung",words:true,make(){
+    const pool=shuffle(drillWords());
+    for(const w of pool){const g=gap(w.w);if(!g)continue;
+      return {type:"typed",prompt:g.html,sub:esc(w.en),fields:[{label:`Fehlendes Wort (${g.answer[0]}… , ${g.answer.length} Buchstaben)`,answer:g.answer}],explain:`<b>${esc(w.w)}</b><br><span class="note">${esc(srcOf(w))}</span>`}}
+    return null}},
+  bedeutung:{name:"Was bedeutet das?",desc:"Deutsch → Englisch",words:true,make(){
+    const pool=drillWords();if(pool.length<4)return null;const w=pick(pool);
+    return {type:"mc",prompt:esc(w.w),sub:esc(srcOf(w)),options:distract(w.en,near(w).map(x=>x.en)),answer:w.en,small:true,explain:`<b>${esc(w.w)}</b> = ${esc(w.en)}`}}},
+  ausdruck:{name:"Wie sagt man …?",desc:"Englisch → Deutsch",words:true,make(){
+    const pool=drillWords();if(pool.length<4)return null;const w=pick(pool);
+    return {type:"mc",prompt:esc(w.en),sub:esc(srcOf(w)),options:distract(w.w,near(w).map(x=>x.w)),answer:w.w,small:true,explain:`<b>${esc(w.w)}</b> = ${esc(w.en)}`}}},
+  artikel:{name:"Artikel",desc:"der, die, das · aus Meine Wörter",make(){
+    const pool=allWords().filter(w=>w.own&&w.kind==="n"&&!/\(Pl\.\)/.test(w.w));if(!pool.length)return {empty:"Das Buch listet Wendungen, keine einzelnen Nomen. Trag Nomen mit Artikel unter „Meine Wörter“ ein, dann übst du sie hier."};const w=pick(pool);
+    return {type:"mc",prompt:esc(w.w),sub:esc(w.en),options:["der","die","das"],answer:w.art,cls:o=>"art-"+o,explain:`<b>${artHTML(w)}</b>${w.pl?` · Pl. ${esc(w.pl)}`:""}`}}},
+  vprep:{name:"Verb + Präposition",desc:"Präposition und Kasus · Kap. 1",make(){
+    const x=pick(PLIST),lab=i=>`${i.p} + ${CASE[i.c]}`;
+    return {type:"mc",prompt:`${esc(x.v)} <span style="color:var(--muted)">___</span>`,sub:esc(x.en),options:distract(lab(x),PLIST.map(lab)),answer:lab(x),explain:`<b>${esc(x.v)} ${esc(x.p)}</b> ${caseTag(x.c)}<br><span class="ex">${esc(x.ex)}</span>`}}},
+  aprep:{name:"Adjektiv + Präposition",desc:"stolz auf, zufrieden mit … · Kap. 11",make(){
+    const x=pick(ALIST),lab=i=>`${i.p} + ${CASE[i.c]}`;
+    return {type:"mc",prompt:`${esc(x.v)} <span style="color:var(--muted)">___</span>`,sub:esc(x.en),options:distract(lab(x),ALIST.concat(PLIST).map(lab)),answer:lab(x),explain:`<b>${esc(x.v)} ${esc(x.p)}</b> ${caseTag(x.c)}<br><span class="ex">${esc(x.ex)}</span>`}}},
+  kasus:{name:"Dativ oder Akkusativ?",desc:"Verben mit direktem Kasus · Kap. 10",make(){
+    const x=pick(CLIST);
+    return {type:"mc",prompt:esc(x.v)+" + ?",sub:esc(x.en),options:["Akkusativ","Dativ","Dativ + Akkusativ"],answer:CASELONG[x.c],explain:`${caseTag(x.c)} <span class="ex">${esc(x.ex)}</span>`}}},
+  formen:{name:"Verbformen",desc:"Präteritum und Perfekt · Kap. 1",make(){
+    const x=pick(VLIST);
+    return {type:"typed",prompt:esc(x.v),sub:esc(x.en)+" · Form für er/sie/es",fields:[{label:"Präteritum (er …)",answer:x.pr},{label:"Perfekt (er …)",answer:x.pf}],explain:`<span class="forms">${esc(x.v)} – ${esc(x.p3)} – ${esc(x.pr)} – ${esc(x.pf)}</span>`}}}
+};
+function srcOf(w){return w.own?"Meine Wörter":`Kap. ${w.ch} · ${w.topic}`}
+function near(w){const all=allWords().filter(x=>x!==w&&x.w!==w.w&&x.en!==w.en);const same=all.filter(x=>x.ch===w.ch);return same.length>=3?same:all}
+function gap(de){
+  const toks=de.split(" ");let depth=0;const cand=[];
+  toks.forEach((t,i)=>{const open=(t.match(/\(/g)||[]).length,close=(t.match(/\)/g)||[]).length;
+    const m=t.match(/^([A-Za-zÄÖÜäöüß]{4,})([.,!?…:]*)$/);
+    if(depth===0&&!open&&m&&!/^(sein|haben|werden|eine|einen|einem|einer|nicht|sich|über|oder)$/i.test(m[1]))cand.push(i);
+    depth+=open-close});
+  if(!cand.length)return null;const i=pick(cand),m=toks[i].match(/^([A-Za-zÄÖÜäöüß]+)(.*)$/);
+  return {answer:m[1],html:toks.map((t,j)=>j===i?`<span style="color:var(--accent)">_____</span>${esc(m[2])}`:esc(t)).join(" ")};
+}
+function distract(correct,all){const others=shuffle([...new Set(all)].filter(o=>o!==correct)).slice(0,3);return shuffle([correct,...others])}
+let drillKey=LS.get("wk_drill","luecke"), drillSel=LS.get("wk_drillsel","all"), cur=null, answered=false, score={ok:0,n:0};
+function drillWords(){return wordsFor(drillSel)}
+function renderDrills(){
+  if(!DRILLS[drillKey])drillKey="luecke";
+  $("#drills").innerHTML=Object.entries(DRILLS).map(([k,d])=>`<button class="drill" data-k="${k}" aria-pressed="${k===drillKey}"><b>${d.name}</b><span>${d.desc}</span></button>`).join("");
+}
+$("#drills").addEventListener("click",e=>{const b=e.target.closest(".drill");if(!b)return;drillKey=b.dataset.k;LS.set("wk_drill",drillKey);score={ok:0,n:0};renderDrills();nextQ()});
+function chOptions(v){return `<option value="all"${v==="all"?" selected":""}>Alle Kapitel</option>`+CHAPTERS.map((t,i)=>`<option value="${i+1}"${v===i+1?" selected":""}>Kap. ${i+1} · ${esc(t)}</option>`).join("")+(custom.length?`<option value="E"${v==="E"?" selected":""}>Meine Wörter</option>`:"")}
+function nextQ(){
+  const d=DRILLS[drillKey];cur=d.make();answered=false;
+  const head=`<div class="tbar">${d.words?`<div class="chsel"><label class="label" for="dsel">Wörter aus</label><select id="dsel">${chOptions(drillSel)}</select></div>`:`<span class="label">${d.name}</span>`}<span class="score">${score.ok} / ${score.n} richtig</span></div>`;
+  if(!cur||cur.empty){$("#drillArea").innerHTML=head+`<div class="q"><p class="note">${cur?esc(cur.empty):"Keine Wörter in dieser Auswahl."}</p></div>`;bindSel();cur=null;return}
+  let body="";
+  if(cur.type==="mc")body=`<div class="opts${cur.small?" long":""}">${cur.options.map((o,i)=>`<button class="opt" data-o="${esc(o)}"><kbd>${i+1}</kbd>${esc(o)}</button>`).join("")}</div>`;
+  else body=`<form class="fields" id="tform">${cur.fields.map((f,i)=>`<div class="field" id="f${i}"><label class="label" for="in${i}">${esc(f.label)}</label><input type="text" id="in${i}" autocomplete="off" autocapitalize="off" spellcheck="false"><span class="fb" id="fb${i}"></span></div>`).join("")}<button class="btn primary" type="submit" id="check">Prüfen</button></form>`;
+  $("#drillArea").innerHTML=head+`<div class="q"><div class="prompt"${cur.prompt.length>60?' style="font-size:clamp(18px,4vw,24px)"':""}>${cur.prompt}</div>${cur.sub?`<div class="sub">${cur.sub}</div>`:""}${body}<div id="after"></div></div>`;
+  bindSel();
+  if(cur.type==="mc")document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>answerMC(b.dataset.o));
+  else{$("#tform").onsubmit=e=>{e.preventDefault();answered?nextQ():checkTyped()};$("#in0").focus()}
+}
+function bindSel(){const s=$("#dsel");if(s)s.onchange=()=>{const v=s.value;drillSel=(v==="all"||v==="E")?v:+v;LS.set("wk_drillsel",drillSel);nextQ()}}
+function answerMC(o){
+  if(answered)return;answered=true;const ok=o===cur.answer;score.n++;if(ok)score.ok++;
+  document.querySelectorAll(".opt").forEach(b=>{if(b.dataset.o===cur.answer)b.classList.add("right");else if(b.dataset.o===o)b.classList.add("wrong");if(cur.cls)b.classList.add(cur.cls(b.dataset.o))});
+  showAfter(ok);
+}
+function checkTyped(){
+  let all=true;
+  cur.fields.forEach((f,i)=>{const v=$("#in"+i).value,el=$("#f"+i),fb=$("#fb"+i);let ok=false,msg="";
+    if(norm(v)===norm(f.answer)){ok=true}
+    else if(fold(v)===fold(f.answer)){ok=true;msg=`Fast: achte auf ä, ö, ü, ß → <b>${esc(f.answer)}</b>`}
+    else if(f.noun){const parts=norm(v).split(" "),word=parts.slice(1).join(" "),bare=norm(f.noun.w.replace(/\s*\(Pl\.\)/,""));
+      if(fold(word)===fold(bare)||fold(v)===fold(bare)){msg=`Wort richtig, Artikel: <b>${artHTML(f.noun)}</b>`}else msg=`Richtig: <b>${esc(f.answer)}</b>`}
+    else msg=`Richtig: <b>${esc(f.answer)}</b>`;
+    if(!ok)all=false;el.classList.add(ok?"ok":"bad");fb.innerHTML=msg;$("#in"+i).readOnly=true});
+  answered=true;score.n++;if(all)score.ok++;$("#check").textContent="Weiter";showAfter(all,true);
+}
+function showAfter(ok,typed){
+  $("#after").innerHTML=`<div class="explain">${ok?`<b style="color:var(--ok)">Richtig.</b> `:`<b style="color:var(--bad)">Nicht ganz.</b> `}${cur.explain}</div>${typed?"":`<button class="btn primary" id="nextBtn" style="margin-top:12px">Weiter</button>`}`;
+  const n=$("#nextBtn");if(n){n.onclick=nextQ;n.focus()}else $("#check").focus();
+  document.querySelector(".score").textContent=`${score.ok} / ${score.n} richtig`;
+}
+document.addEventListener("keydown",e=>{
+  if(tab==="ueben"&&cur&&cur.type==="mc"){if(!answered&&/^[1-4]$/.test(e.key)){const o=cur.options[+e.key-1];if(o)answerMC(o)}else if(answered&&e.key==="Enter"&&document.activeElement?.id!=="nextBtn"){e.preventDefault();nextQ()}}
+  if(tab==="lernen"&&session&&e.target.tagName!=="INPUT"&&e.target.tagName!=="TEXTAREA"){
+    if(e.key===" "&&document.activeElement?.id!=="card"){e.preventDefault();$("#card")?.click()}
+    if(session.flipped&&e.key==="ArrowRight")answerCard(true);if(session.flipped&&e.key==="ArrowLeft")answerCard(false)}
+});
+
+/* ---------- SUCHEN ---------- */
+const FILTERS=[["all","Alle"],["n","Wendungen"],["v","Verben"],["vp","Verb + Präp."],["vc","Verb + Kasus"],["ap","Adjektiv + Präp."]];
+let filt=LS.get("wk_filt","all");
+function allVerbs(){
+  const m=new Map();
+  const add=(v,en)=>{v=v.replace(/^sich /,"");if(!/^[a-zäöüß]{2,}(en|ern|eln)$/.test(v)&&v!=="sein"&&v!=="tun")return;en=en||GLOSS[v]||"";if(!m.has(v)||(!m.get(v)&&en))m.set(v,en)};
+  VLIST.forEach(x=>add(x.v,x.en));CLIST.forEach(x=>add(x.v,x.en));PLIST.forEach(x=>add(x.v,""));
+  allWords().forEach(w=>{if(w.art)return;const pv=phraseVerb(w.w);if(pv)add(pv,"");if(w.own&&/^(sich )?[a-zäöüß]+n$/.test(w.w))add(w.w,w.en)});
+  return [...m].sort((a,b)=>a[0].localeCompare(b[0],"de"));
+}
+let IDX=null,IDXKEY="";
+function index(){
+  const key=custom.length+":"+(custom[custom.length-1]||{}).id;if(IDX&&IDXKEY===key)return IDX;
+  const out=[];
+  allWords().forEach(w=>out.push({t:"n",look:w.art?"":(phraseVerb(w.w)||(w.kind==="x"&&/^(sich )?[a-zäöüß]+n$/.test(w.w)?w.w:"")),de:deText(w),en:w.en,html:w.art?artHTML(w):annot(w.w),det:`<span class="k">${esc(srcOf(w))}</span>${w.pl?`<span>Pl. ${esc(w.pl)}</span>`:""}`}));
+  allVerbs().forEach(([v,en])=>{const f=verbForms(v);const b=bookList(v).length;const vt=verbType(v);out.push({t:"v",look:v,de:v+" "+f.p3+" "+f.pr+" "+f.pf+" "+VT[vt][0],en,html:esc(v),tag:`<span class="vt vt-${vt} sm" title="${VT[vt][0]}: ${VT[vt][1]}">${{reg:"reg.",irr:"unreg.",mix:"gem."}[vt]}</span>`,det:`<span class="forms">${esc(f.p3)} · ${esc(f.pr)} · ${esc(f.pf)}</span>${b?`<span>${b}× im Buch</span>`:""}`})});
+  PLIST.forEach(x=>out.push({t:"vp",look:x.v,de:x.v+" "+x.p,en:x.en,html:`${esc(x.v)} <b>${esc(x.p)}</b>`,det:`<span class="k">Verb + Präp.</span>${caseTag(x.c)}<span class="ex">${esc(x.ex)}</span>`}));
+  CLIST.forEach(x=>out.push({t:"vc",look:x.v,de:x.v,en:x.en,html:esc(x.v),det:`<span class="k">Verb + Kasus</span>${caseTag(x.c)}<span class="ex">${esc(x.ex)}</span>`}));
+  ALIST.forEach(x=>out.push({t:"ap",look:x.v,de:x.v+" "+x.p,en:x.en,html:`${esc(x.v)} <b>${esc(x.p)}</b>`,det:`<span class="k">Adjektiv + Präp.</span>${caseTag(x.c)}<span class="ex">${esc(x.ex)}</span>`}));
+  IDX=out;IDXKEY=key;return out;
+}
+/* recent searches and opened items */
+let recent=LS.get("wk_recent",[]);
+function pushRecent(t,v){v=String(v).trim();if(!v)return;recent=[{t,v},...recent.filter(r=>!(r.v.toLowerCase()===v.toLowerCase()))].slice(0,12);LS.set("wk_recent",recent)}
+function recentHTML(){
+  if(!recent.length)return `<div class="empty"><p>Type a word, phrase or verb, in German or English. Tap a result for its forms, cases and all book phrases.</p><p class="note">Your recent searches and opened words will appear here.</p></div>`;
+  return `<div class="recent"><div class="rhead"><span class="label">Zuletzt</span><button class="lnk" id="clearRecent">Verlauf löschen</button></div><div class="chips">${recent.map(r=>`<button class="chip rc" data-t="${r.t}" data-v="${esc(r.v)}">${r.t==="look"?"↗ ":"⌕ "}${esc(r.v)}</button>`).join("")}</div></div>`;
+}
+let qTimer=null;
+function renderSearch(){
+  $("#filters").innerHTML=FILTERS.map(([k,l])=>{const n=k==="all"?"":` <span class="n">${index().filter(r=>r.t===k).length}</span>`;return `<button class="chip" data-f="${k}" aria-pressed="${k===filt}">${l}${n}</button>`}).join("");
+  const qv=$("#q").value.trim(),q=fold(qv);
+  const hasProf=qv&&verbProfile(qv);
+  $("#profile").innerHTML=hasProf?`<button class="btn primary" id="openProf" data-v="${esc(qv)}">Alle Details zu „${esc(qv)}“ →</button>`:"";
+  if(!q&&filt==="all"){$("#count").textContent="";$("#results").innerHTML="";$("#results").hidden=true;$("#recentBox").innerHTML=recentHTML();return}
+  $("#recentBox").innerHTML="";$("#results").hidden=false;
+  let res=index().filter(r=>filt==="all"||r.t===filt);
+  if(q)res=res.filter(r=>fold(r.de).includes(q)||fold(r.en).includes(q)).sort((a,b)=>(fold(a.de).startsWith(q)?0:1)-(fold(b.de).startsWith(q)?0:1));
+  const LIMIT=q?60:200;
+  $("#count").textContent=res.length>LIMIT?`${res.length} Einträge · die ersten ${LIMIT}`:`${res.length} Einträge`;
+  $("#results").innerHTML=res.length?res.slice(0,LIMIT).map(r=>`<div class="r${r.look?" click":""}${r.tag?" tagged":""}"${r.look?` data-look="${esc(r.look)}" role="button" tabindex="0"`:""}>${r.tag||""}<div class="de">${r.html}</div><div class="en">${esc(r.en)}</div><div class="det">${r.det}</div></div>`).join(""):`<div class="r"><div class="en">Nichts gefunden. Neue Wörter kannst du unter „Meine Wörter“ eintragen.</div></div>`;
+}
+$("#filters").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;filt=b.dataset.f;LS.set("wk_filt",filt);renderSearch()});
+$("#q").addEventListener("input",()=>{renderSearch();clearTimeout(qTimer);const v=$("#q").value.trim();if(v.length>=3)qTimer=setTimeout(()=>{if($("#q").value.trim()===v)pushRecent("q",v)},1500)});
+$("#q").addEventListener("keydown",e=>{if(e.key==="Enter"){const v=$("#q").value.trim();if(v){pushRecent("q",v);if(verbProfile(v))openLook(v)}}});
+$("#recentBox").addEventListener("click",e=>{
+  if(e.target.closest("#clearRecent")){recent=[];LS.set("wk_recent",recent);renderSearch();return}
+  const c=e.target.closest(".rc");if(!c)return;
+  if(c.dataset.t==="look")openLook(c.dataset.v);else{$("#q").value=c.dataset.v;renderSearch();$("#q").focus()}});
+$("#results").addEventListener("click",e=>{const r=e.target.closest(".r.click");if(r)openLook(r.dataset.look)});
+$("#results").addEventListener("keydown",e=>{const r=e.target.closest(".r.click");if(r&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openLook(r.dataset.look)}});
+$("#profile").addEventListener("click",e=>{const b=e.target.closest("#openProf");if(b)openLook(b.dataset.v)});
+$("#modal").addEventListener("click",e=>{if(e.target.id==="modal"||e.target.closest("#closeProf")){closeLook();return}
+  const t=e.target.closest(".tbtn");if(!t)return;const on=t.getAttribute("aria-pressed")!=="true";
+  document.querySelectorAll("#mbody .tbtn").forEach(b=>b.setAttribute("aria-pressed",String(on&&b===t)));
+  document.querySelectorAll("#mbody .tlist").forEach(l=>l.hidden=!(on&&l.dataset.tl===t.dataset.t))});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#modal").hidden)closeLook()},true);
+
+/* ---------- MEINE WÖRTER ---------- */
+$("#bulkCh").innerHTML=`<option value="">ohne Kapitel</option>`+CHAPTERS.map((t,i)=>`<option value="${i+1}">Kap. ${i+1} · ${esc(t)}</option>`).join("");
+$("#addBtn").onclick=()=>{
+  let ch=$("#bulkCh").value?+$("#bulkCh").value:null;let added=0,bad=0,dup=0;const chs=new Set();
+  const seen=new Set(custom.map(c=>c.ch+"|"+(c.art+" "+c.w).toLowerCase()));
+  $("#bulk").value.split("\n").map(l=>l.trim()).filter(Boolean).forEach(l=>{
+    const h=l.match(/^Kapitel\s+(\d{1,2})\b/i);if(h&&+h[1]>=1&&+h[1]<=12){ch=+h[1];return}
+    const p=parseLine(l);if(!p){bad++;return}
+    const k=ch+"|"+(p.art+" "+p.w).toLowerCase();if(seen.has(k)){dup++;return}seen.add(k);
+    custom.push({...p,ch,id:Date.now().toString(36)+Math.random().toString(36).slice(2,7)});added++;if(ch)chs.add(ch)});
+  LS.set("wk_custom",custom);
+  $("#addMsg").textContent=added?`${added} Wörter hinzugefügt`+(chs.size?` (Kap. ${[...chs].sort((a,b)=>a-b).join(", ")})`:"")+"."+(dup?` ${dup} doppelte übersprungen.`:"")+(bad?` ${bad} Zeilen ohne Übersetzung übersprungen.`:""):"Keine Wörter erkannt. Jede Zeile braucht Deutsch und Englisch, getrennt durch =, Tab oder zwei Leerzeichen.";
+  if(added)$("#bulk").value="";renderMine();session=null;
+};
+function renderMine(){
+  $("#mineList").innerHTML=custom.length?custom.slice().reverse().map(c=>`<div class="r"><div class="de">${artHTML(c)}${c.pl?` <span class="note">Pl. ${esc(c.pl)}</span>`:""}</div><div class="en">${esc(c.en)} <span class="note">· ${c.ch?"Kap. "+c.ch:"ohne Kapitel"}</span></div><button class="del" data-id="${c.id}" aria-label="Löschen">Löschen</button></div>`).join(""):`<div class="r"><div class="en">Noch keine eigenen Wörter.</div></div>`;
+}
+$("#mineList").addEventListener("click",e=>{const b=e.target.closest(".del");if(!b)return;custom=custom.filter(c=>c.id!==b.dataset.id);LS.set("wk_custom",custom);renderMine();session=null});
+$("#exportBtn").onclick=()=>{$("#backup").value=JSON.stringify({custom,boxes});$("#bkMsg").textContent="Backup-Text steht oben."};
+$("#copyBtn").onclick=()=>{const t=$("#backup");if(!t.value)t.value=JSON.stringify({custom,boxes});
+  navigator.clipboard.writeText(t.value).then(()=>$("#bkMsg").textContent="Kopiert.").catch(()=>{t.select();$("#bkMsg").textContent="Text markiert – jetzt kopieren."})};
+$("#importBtn").onclick=()=>{try{const d=JSON.parse($("#backup").value);if(!Array.isArray(d.custom))throw 0;custom=d.custom;boxes=d.boxes||{};LS.set("wk_custom",custom);LS.set("wk_boxes",boxes);renderMine();session=null;$("#bkMsg").textContent=`${custom.length} eigene Wörter und Fortschritt eingelesen.`}catch(e){$("#bkMsg").textContent="Das ist kein gültiger Backup-Text. Füge den kompletten Text ein."}};
+
+
+/* ---------- BOOK FILE ---------- */
+function validBook(b){return Array.isArray(b)&&b.length>0&&b.every(x=>Array.isArray(x)&&typeof x[0]==="number"&&typeof x[1]==="string"&&Array.isArray(x[3]))}
+document.querySelectorAll(".bookFile").forEach(inp=>inp.addEventListener("change",()=>{
+  const f=inp.files&&inp.files[0];const msg=inp.closest(".panel").querySelector(".bookMsg");if(!f)return;
+  const rd=new FileReader();
+  rd.onload=()=>{try{const d=JSON.parse(rd.result);const b=Array.isArray(d)?d:d.book;
+      if(!validBook(b))throw new Error("format");
+      localStorage.setItem("wk_book",JSON.stringify(b));msg.textContent="Geladen. Die App startet neu …";setTimeout(()=>location.reload(),600);
+    }catch(e){msg.textContent=e&&e.name==="QuotaExceededError"?"Kein Speicherplatz frei. Bitte Browserdaten prüfen.":"Diese Datei ist keine Wortkiste-Buchliste. Wähle wortkiste-buchliste.json."}};
+  rd.onerror=()=>{msg.textContent="Die Datei konnte nicht gelesen werden."};
+  rd.readAsText(f);
+}));
+$("#bookSetup").hidden=BOOK.length>0;
+$("#bookInfo").textContent=BOOK.length?`${BASE.length} Wendungen aus ${new Set(BOOK.map(b=>b[0])).size} Kapiteln auf diesem Gerät.`:"Noch keine Buchliste auf diesem Gerät.";
+if("serviceWorker" in navigator&&location.protocol==="https:")addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+/* ---------- START ---------- */
+renderDrills();nextQ();
+setTab(LS.get("wk_tab","lernen"));
+if(tab!=="lernen")renderGrid();
+</script>
+</body>
+</html>

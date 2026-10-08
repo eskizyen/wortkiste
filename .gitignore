@@ -1,0 +1,3 @@
+# The book's word list is private: never commit it
+wortkiste-buchliste.json
+*.buchliste.json
