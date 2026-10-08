@@ -860,10 +860,15 @@ function parseLine(line){
   return {art:"",w:left,pl:"",en,kind:"x"};
 }
 const BASE=[];
-BOOK.forEach(([ch,topic,topicEn,items])=>items.forEach(([de,en])=>BASE.push({ch,topic,topicEn,art:"",w:de,pl:"",en,kind:"x",key:"b:"+ch+":"+de})));
+BOOK.forEach(([ch,topic,topicEn,items,src])=>items.forEach(([de,en,k])=>{
+  let art="",w=de,pl="",kind="x";
+  if(k==="N"){const m=de.match(/^(der|die|das|der\/die)\s+([^,]+?)(?:\s*,\s*(.+))?$/);if(m){art=m[1]==="der/die"?"":m[1];w=m[1]==="der/die"?"der/die "+m[2]:m[2].trim();pl=(m[3]||"").trim();kind=art?"n":"x"}}
+  else if(k==="V")kind="v";else if(k==="A")kind="a";
+  BASE.push({ch,topic,topicEn,art,w,pl,en,kind,src:src||"liste",key:"b:"+ch+":"+de})}));
 function topicsOf(ch){return [...new Set(BOOK.filter(b=>b[0]===ch).map(b=>b[1]))]}
 const VLIST=VERBS.trim().split("\n").map(l=>{const [v,p3,pr,pf,en]=l.split("|");return {v,p3,pr,pf,en}});
 const PLIST=VPREP.trim().split("\n").map(l=>{const [v,p,c,en,ex]=l.split("|");return {v,p,c,en,ex}});
+try{const xs=JSON.parse(localStorage.getItem("wk_vprep")||"[]");if(Array.isArray(xs))xs.forEach(([v,p,c,en,ch])=>{if(!PLIST.some(x=>x.v===v&&x.p===p))PLIST.push({v,p,c,en,ex:"",ch})})}catch(e){}
 const CLIST=VCASE.trim().split("\n").map(l=>{const [v,c,en,ex]=l.split("|");return {v,c,en,ex}});
 const ALIST=APREP.trim().split("\n").map(l=>{const [v,p,c,en,ex]=l.split("|");return {v,p,c,en,ex}});
 
@@ -1227,8 +1232,8 @@ const DRILLS={
   ausdruck:{name:"Wie sagt man …?",desc:"Englisch → Deutsch",words:true,make(){
     const pool=drillWords();if(pool.length<4)return null;const w=pick(pool);
     return {type:"mc",prompt:esc(w.en),sub:esc(srcOf(w)),options:distract(w.w,near(w).map(x=>x.w)),answer:w.w,small:true,explain:`<b>${esc(w.w)}</b> = ${esc(w.en)}`}}},
-  artikel:{name:"Artikel",desc:"der, die, das · aus Meine Wörter",make(){
-    const pool=allWords().filter(w=>w.own&&w.kind==="n"&&!/\(Pl\.\)/.test(w.w));if(!pool.length)return {empty:"Das Buch listet Wendungen, keine einzelnen Nomen. Trag Nomen mit Artikel unter „Meine Wörter“ ein, dann übst du sie hier."};const w=pick(pool);
+  artikel:{name:"Artikel",desc:"der, die oder das?",words:true,make(){
+    const pool=drillWords().filter(w=>w.kind==="n"&&w.art&&!/\(Pl\.\)/.test(w.w));if(!pool.length)return {empty:"In dieser Auswahl gibt es keine Nomen mit Artikel. Lade die neue Buchliste oder trag Nomen unter „Meine Wörter“ ein."};const w=pick(pool);
     return {type:"mc",prompt:esc(w.w),sub:esc(w.en),options:["der","die","das"],answer:w.art,cls:o=>"art-"+o,explain:`<b>${artHTML(w)}</b>${w.pl?` · Pl. ${esc(w.pl)}`:""}`}}},
   vprep:{name:"Verb + Präposition",desc:"Präposition und Kasus · Kap. 1",make(){
     const x=pick(PLIST),lab=i=>`${i.p} + ${CASE[i.c]}`;
@@ -1311,14 +1316,14 @@ function allVerbs(){
   const m=new Map();
   const add=(v,en)=>{v=v.replace(/^sich /,"");if(!/^[a-zäöüß]{2,}(en|ern|eln)$/.test(v)&&v!=="sein"&&v!=="tun")return;en=en||GLOSS[v]||"";if(!m.has(v)||(!m.get(v)&&en))m.set(v,en)};
   VLIST.forEach(x=>add(x.v,x.en));CLIST.forEach(x=>add(x.v,x.en));PLIST.forEach(x=>add(x.v,""));
-  allWords().forEach(w=>{if(w.art)return;const pv=phraseVerb(w.w);if(pv)add(pv,"");if(w.own&&/^(sich )?[a-zäöüß]+n$/.test(w.w))add(w.w,w.en)});
+  allWords().forEach(w=>{if(w.art)return;const pv=phraseVerb(w.w);if(pv)add(pv,"");if((w.own||w.kind==="v")&&/^(sich )?[a-zäöüß]+n$/.test(w.w))add(w.w,w.en)});
   return [...m].sort((a,b)=>a[0].localeCompare(b[0],"de"));
 }
 let IDX=null,IDXKEY="";
 function index(){
   const key=custom.length+":"+(custom[custom.length-1]||{}).id;if(IDX&&IDXKEY===key)return IDX;
   const out=[];
-  allWords().forEach(w=>out.push({t:"n",look:w.art?"":(phraseVerb(w.w)||(w.kind==="x"&&/^(sich )?[a-zäöüß]+n$/.test(w.w)?w.w:"")),de:deText(w),en:w.en,html:w.art?artHTML(w):annot(w.w),det:`<span class="k">${esc(srcOf(w))}</span>${w.pl?`<span>Pl. ${esc(w.pl)}</span>`:""}`}));
+  allWords().forEach(w=>out.push({t:"n",look:w.art?"":(w.kind==="v"&&/^(sich )?[a-zäöüß]+n$/.test(w.w)?w.w:(phraseVerb(w.w)||(w.kind==="x"&&/^(sich )?[a-zäöüß]+n$/.test(w.w)?w.w:""))),de:deText(w),en:w.en,html:w.art?artHTML(w):annot(w.w),det:`<span class="k">${esc(srcOf(w))}</span>${w.pl?`<span>Pl. ${esc(w.pl)}</span>`:""}`}));
   allVerbs().forEach(([v,en])=>{const f=verbForms(v);const b=bookList(v).length;const vt=verbType(v);out.push({t:"v",look:v,de:v+" "+f.p3+" "+f.pr+" "+f.pf+" "+VT[vt][0],en,html:esc(v),tag:`<span class="vt vt-${vt} sm" title="${VT[vt][0]}: ${VT[vt][1]}">${{reg:"reg.",irr:"unreg.",mix:"gem."}[vt]}</span>`,det:`<span class="forms">${esc(f.p3)} · ${esc(f.pr)} · ${esc(f.pf)}</span>${b?`<span>${b}× im Buch</span>`:""}`})});
   PLIST.forEach(x=>out.push({t:"vp",look:x.v,de:x.v+" "+x.p,en:x.en,html:`${esc(x.v)} <b>${esc(x.p)}</b>`,det:`<span class="k">Verb + Präp.</span>${caseTag(x.c)}<span class="ex">${esc(x.ex)}</span>`}));
   CLIST.forEach(x=>out.push({t:"vc",look:x.v,de:x.v,en:x.en,html:esc(x.v),det:`<span class="k">Verb + Kasus</span>${caseTag(x.c)}<span class="ex">${esc(x.ex)}</span>`}));
@@ -1393,7 +1398,7 @@ document.querySelectorAll(".bookFile").forEach(inp=>inp.addEventListener("change
   const rd=new FileReader();
   rd.onload=()=>{try{const d=JSON.parse(rd.result);const b=Array.isArray(d)?d:d.book;
       if(!validBook(b))throw new Error("format");
-      localStorage.setItem("wk_book",JSON.stringify(b));msg.textContent="Geladen. Die App startet neu …";setTimeout(()=>location.reload(),600);
+      localStorage.setItem("wk_book",JSON.stringify(b));localStorage.setItem("wk_vprep",JSON.stringify(Array.isArray(d)?[]:(d.vprep||[])));msg.textContent="Geladen. Die App startet neu …";setTimeout(()=>location.reload(),600);
     }catch(e){msg.textContent=e&&e.name==="QuotaExceededError"?"Kein Speicherplatz frei. Bitte Browserdaten prüfen.":"Diese Datei ist keine Wortkiste-Buchliste. Wähle wortkiste-buchliste.json."}};
   rd.onerror=()=>{msg.textContent="Die Datei konnte nicht gelesen werden."};
   rd.readAsText(f);
