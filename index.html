@@ -204,6 +204,10 @@ html.lock,html.lock body{overflow:hidden}
 .nouns.sm{justify-content:flex-start;margin-top:4px;font-size:12.5px;grid-column:1/-1}
 .nn{white-space:nowrap}.nn .pl{color:var(--muted)}.nn .ne{color:var(--muted)}
 .nouns.sm .ne{display:none}
+.exm{margin-top:12px;display:flex;flex-direction:column;gap:2px;font:400 15px/1.4 var(--f-body);text-align:center}
+.exm .exde{font-style:italic;color:var(--ink)}.exm .exen{color:var(--muted);font-size:13.5px}
+.exm.sm{grid-column:1/-1;text-align:left;margin-top:4px;font-size:13px}.exm.sm .exen{font-size:12.5px}
+.explain .exm{text-align:left}
 .r.click{cursor:pointer}.r.click:hover,.r.click:focus-visible{background:var(--soft)}
 .r.click .de::after{content:" ›";color:var(--muted)}
 .x{all:unset;cursor:pointer;margin-left:auto;font:400 22px/1 var(--f-body);color:var(--muted);padding:0 4px}
@@ -888,11 +892,12 @@ function parseLine(line){
   return {art:"",w:left,pl:"",en,kind:"x"};
 }
 const BASE=[];
-BOOK.forEach(([ch,topic,topicEn,items,src])=>items.forEach(([de,en,k])=>{
+BOOK.forEach(([ch,topic,topicEn,items,src])=>items.forEach(([de,en,k,ex,exEn])=>{
   let art="",w=de,pl="",kind="x";
   if(k==="N"){const m=de.match(/^(der|die|das|der\/die)\s+([^,]+?)(?:\s*,\s*(.+))?$/);if(m){art=m[1];w=m[2].trim();pl=(m[3]||"").trim();kind=art==="der/die"?"n2":"n"}}
   else if(k==="V")kind="v";else if(k==="A")kind="a";
-  BASE.push({ch,topic,topicEn,art,w,pl,en,kind,src:src||"liste",key:"b:"+ch+":"+de})}));
+  BASE.push({ch,topic,topicEn,art,w,pl,en,kind,ex:ex||"",exEn:exEn||"",src:src||"liste",key:"b:"+ch+":"+de})}));
+function exHTML(w,cls){return w&&w.ex?`<div class="${cls||"exm"}"><span class="exde">${esc(w.ex)}</span><span class="exen">${esc(w.exEn)}</span></div>`:""}
 function topicsOf(ch){return [...new Set(BOOK.filter(b=>b[0]===ch).map(b=>b[1]))]}
 const VLIST=VERBS.trim().split("\n").map(l=>{const [v,p3,pr,pf,en]=l.split("|");return {v,p3,pr,pf,en}});
 const PLIST=VPREP.trim().split("\n").map(l=>{const [v,p,c,en,ex]=l.split("|");return {v,p,c,en,ex}});
@@ -1149,7 +1154,7 @@ function bookList(word){
   const re=new RegExp(`(^|[\\s/(])${word}([\\s/.,)!?]|$)`);
   return BASE.filter(w=>re.test(w.w));
 }
-function bookHTML(book){return book.length?`<section class="msec"><h4>Im Buch <span class="count">${book.length}</span></h4>${book.map(w=>`<div class="vrow"><div>${annot(w.w)}</div><div class="en">${esc(w.en)}</div>${nounsHTML(w.w,"nouns sm")}<div class="note">${esc(srcOf(w))}</div></div>`).join("")}</section>`:""}
+function bookHTML(book){return book.length?`<section class="msec"><h4>Im Buch <span class="count">${book.length}</span></h4>${book.map(w=>`<div class="vrow"><div>${annot(w.w)}</div><div class="en">${esc(w.en)}</div>${nounsHTML(w.w,"nouns sm")}${exHTML(w,"exm sm")}<div class="note">${esc(srcOf(w))}</div></div>`).join("")}</section>`:""}
 function headHTML(kind,title,en){return `<header class="mhead"><div><span class="label hl">${kind}</span><h3 id="mtitle">${esc(title)}</h3>${en?`<div class="en">${esc(en)}</div>`:""}</div><button class="x" id="closeProf" aria-label="Schließen">×</button></header>`}
 function adjProfile(a){
   const rows=ALIST.filter(x=>x.v===a);if(!rows.length)return "";
@@ -1230,7 +1235,7 @@ function renderCard(){
   const frontDe=`<div class="front"${fs(w.w)}>${w.art?artHTML(w):annot(w.w)}</div>${w.pl?`<div class="pl">Pl. ${esc(w.pl)}</div>`:""}`;
   const frontEn=`<div class="front"${fs(w.en)}>${esc(w.en)}</div>`;
   const pv=!w.art&&phraseVerb(w.w), look=pv?`<div class="look"><span class="lk" data-v="${esc(pv)}" role="link" tabindex="0">Verb nachschlagen: ${esc(pv)} →</span></div>`:"";
-  const front=dir==="de"?frontDe:frontEn, back=(dir==="de"?`<div class="back">${esc(w.en)}</div>`:`<div class="back">${frontDe}</div>`)+(w.kind!=="n"?nounsHTML(w.w):"")+look;
+  const front=dir==="de"?frontDe:frontEn, back=(dir==="de"?`<div class="back">${esc(w.en)}</div>`:`<div class="back">${frontDe}</div>`)+exHTML(w)+(w.kind!=="n"&&w.kind!=="n2"?nounsHTML(w.w):"")+look;
   t.innerHTML=top+`<button class="icard" id="card" aria-label="Karte umdrehen">
       <div class="meta"><span class="label">${esc(ch)} · ${session.i+1}/${session.queue.length}</span><span class="boxes" title="Box ${box}/5">${[1,2,3,4,5].map(n=>`<i class="${box>=n?"on":""}"></i>`).join("")}</span></div>
       ${front}${session.flipped?back:`<div class="hint">Tippen oder Leertaste zum Umdrehen</div>`}
@@ -1258,10 +1263,10 @@ const DRILLS={
     return null}},
   bedeutung:{name:"Was bedeutet das?",desc:"Deutsch → Englisch",words:true,make(){
     const pool=drillWords();if(pool.length<4)return null;const w=pick(pool);
-    return {type:"mc",prompt:esc(w.w),sub:esc(srcOf(w)),options:distract(w.en,near(w).map(x=>x.en)),answer:w.en,small:true,explain:`<b>${esc(w.w)}</b> = ${esc(w.en)}`}}},
+    return {type:"mc",prompt:esc(w.w),sub:esc(srcOf(w)),options:distract(w.en,near(w).map(x=>x.en)),answer:w.en,small:true,explain:`<b>${esc(w.w)}</b> = ${esc(w.en)}${exHTML(w)}`}}},
   ausdruck:{name:"Wie sagt man …?",desc:"Englisch → Deutsch",words:true,make(){
     const pool=drillWords();if(pool.length<4)return null;const w=pick(pool);
-    return {type:"mc",prompt:esc(w.en),sub:esc(srcOf(w)),options:distract(w.w,near(w).map(x=>x.w)),answer:w.w,small:true,explain:`<b>${esc(w.w)}</b> = ${esc(w.en)}`}}},
+    return {type:"mc",prompt:esc(w.en),sub:esc(srcOf(w)),options:distract(w.w,near(w).map(x=>x.w)),answer:w.w,small:true,explain:`<b>${esc(w.w)}</b> = ${esc(w.en)}${exHTML(w)}`}}},
   artikel:{name:"Artikel",desc:"der, die oder das?",words:true,make(){
     const pool=drillWords().filter(w=>w.kind==="n"&&w.art&&!/\(Pl\.\)/.test(w.w));if(!pool.length)return {empty:"In dieser Auswahl gibt es keine Nomen mit Artikel. Lade die neue Buchliste oder trag Nomen unter „Meine Wörter“ ein."};const w=pick(pool);
     return {type:"mc",prompt:esc(w.w),sub:esc(w.en),options:["der","die","das"],answer:w.art,cls:o=>"art-"+o,explain:`<b>${artHTML(w)}</b>${w.pl?` · Pl. ${esc(w.pl)}`:""}`}}},
@@ -1355,7 +1360,7 @@ let IDX=null,IDXKEY="";
 function index(){
   const key=custom.length+":"+(custom[custom.length-1]||{}).id;if(IDX&&IDXKEY===key)return IDX;
   const out=[];
-  allWords().forEach(w=>out.push({t:"n",look:w.art?"":(w.kind==="v"&&/^(sich )?[a-zäöüß]+n$/.test(w.w)?w.w:(phraseVerb(w.w)||(w.kind==="x"&&/^(sich )?[a-zäöüß]+n$/.test(w.w)?w.w:""))),de:deText(w),en:w.en,html:w.art?artHTML(w):annot(w.w),det:`<span class="k">${esc(srcOf(w))}</span>${w.pl?`<span>Pl. ${esc(w.pl)}</span>`:""}${w.kind!=="n"&&w.kind!=="n2"?nounsHTML(w.w,"nouns sm"):""}`}));
+  allWords().forEach(w=>out.push({t:"n",look:w.art?"":(w.kind==="v"&&/^(sich )?[a-zäöüß]+n$/.test(w.w)?w.w:(phraseVerb(w.w)||(w.kind==="x"&&/^(sich )?[a-zäöüß]+n$/.test(w.w)?w.w:""))),de:deText(w),en:w.en,html:w.art?artHTML(w):annot(w.w),det:`<span class="k">${esc(srcOf(w))}</span>${w.pl?`<span>Pl. ${esc(w.pl)}</span>`:""}${w.kind!=="n"&&w.kind!=="n2"?nounsHTML(w.w,"nouns sm"):""}${exHTML(w,"exm sm")}`}));
   allVerbs().forEach(([v,en])=>{const f=verbForms(v);const b=bookList(v).length;const vt=verbType(v);out.push({t:"v",look:v,de:v+" "+f.p3+" "+f.pr+" "+f.pf+" "+VT[vt][0],en,html:esc(v),tag:`<span class="vt vt-${vt} sm" title="${VT[vt][0]}: ${VT[vt][1]}">${{reg:"reg.",irr:"unreg.",mix:"gem."}[vt]}</span>`,det:`<span class="forms">${esc(f.p3)} · ${esc(f.pr)} · ${esc(f.pf)}</span>${b?`<span>${b}× im Buch</span>`:""}`})});
   PLIST.forEach(x=>out.push({t:"vp",look:x.v,de:x.v+" "+x.p,en:x.en,html:`${esc(x.v)} <b>${esc(x.p)}</b>`,det:`<span class="k">Verb + Präp.</span>${caseTag(x.c)}<span class="ex">${esc(x.ex)}</span>`}));
   CLIST.forEach(x=>out.push({t:"vc",look:x.v,de:x.v,en:x.en,html:esc(x.v),det:`<span class="k">Verb + Kasus</span>${caseTag(x.c)}<span class="ex">${esc(x.ex)}</span>`}));
