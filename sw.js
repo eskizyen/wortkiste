@@ -1,5 +1,5 @@
 // Wortkiste offline cache. Bump VERSION whenever you upload a new index.html.
-const VERSION = "wortkiste-v2";
+const VERSION = "wortkiste-v3";
 const FONTS = "wortkiste-fonts";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/apple-touch-icon.png"];
 

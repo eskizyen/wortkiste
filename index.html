@@ -200,6 +200,10 @@ html.lock,html.lock body{overflow:hidden}
 .filebtn{position:relative;overflow:hidden;align-self:flex-start}
 .filebtn input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
 .filebtn:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.nouns{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:10px;justify-content:center;font:400 13.5px/1.35 var(--f-body);color:var(--ink)}
+.nouns.sm{justify-content:flex-start;margin-top:4px;font-size:12.5px;grid-column:1/-1}
+.nn{white-space:nowrap}.nn .pl{color:var(--muted)}.nn .ne{color:var(--muted)}
+.nouns.sm .ne{display:none}
 .r.click{cursor:pointer}.r.click:hover,.r.click:focus-visible{background:var(--soft)}
 .r.click .de::after{content:" ›";color:var(--muted)}
 .x{all:unset;cursor:pointer;margin-left:auto;font:400 22px/1 var(--f-body);color:var(--muted);padding:0 4px}
@@ -387,6 +391,7 @@ const CHAPTERS=["Alltag","Essen und Essgewohnheiten","Im Berufsleben","Lernen un
 
 // The book's word list is NOT part of this site. It is loaded once from your own file and kept on this device.
 let BOOK=[];try{const b=JSON.parse(localStorage.getItem("wk_book")||"[]");if(Array.isArray(b))BOOK=b}catch(e){}
+let LEX={};try{const l=JSON.parse(localStorage.getItem("wk_lex")||"{}");if(l&&typeof l==="object")LEX=l}catch(e){}
 
 // infinitive | er/sie/es Präsens | Präteritum | Perfekt | English  (Kap. 1: Vergangenheitsformen)
 const VERBS=`sein|ist|war|ist gewesen|to be
@@ -834,7 +839,30 @@ zählen=to count
 zeichnen=to draw
 zerplatzen=to burst
 zurückfahren=to drive back
-zurücklegen=to cover (a distance); to put back`.split("\n").forEach(l=>{const i=l.indexOf("=");GLOSS[l.slice(0,i)]=l.slice(i+1)});
+zurücklegen=to cover (a distance); to put back
+aufräumen=to tidy up
+ausmachen=to switch off; to agree on
+basieren=to be based (on)
+decken=to cover; to set (the table)
+einigen=to agree (sich einigen)
+ergreifen=to take (measures); to grab
+erwecken=to awaken, bring to life
+formulieren=to put into words, formulate
+hinauswerfen=to throw out
+kaufen=to buy
+leisten=to achieve; to afford (sich etwas leisten)
+raufklettern=to climb up
+rechnen=to calculate; to expect (rechnen mit)
+reden=to talk
+runtergehen=to go down
+sagen=to say
+spazieren=to stroll (spazieren gehen: to go for a walk)
+stellen=to put (upright); to ask (a question)
+treten=to step; to kick
+unterlaufen=to happen by mistake (ein Fehler ist unterlaufen)
+verschenken=to give away
+wechseln=to change, switch
+zusammenhängen=to be connected (with)`.split("\n").forEach(l=>{const i=l.indexOf("=");GLOSS[l.slice(0,i)]=l.slice(i+1)});
 const CASE={A:"Akk",D:"Dat",G:"Gen",N:"Nom",DA:"Dat + Akk"};
 const CASELONG={A:"Akkusativ",D:"Dativ",G:"Genitiv",N:"Nominativ",DA:"Dativ + Akkusativ"};
 
@@ -862,7 +890,7 @@ function parseLine(line){
 const BASE=[];
 BOOK.forEach(([ch,topic,topicEn,items,src])=>items.forEach(([de,en,k])=>{
   let art="",w=de,pl="",kind="x";
-  if(k==="N"){const m=de.match(/^(der|die|das|der\/die)\s+([^,]+?)(?:\s*,\s*(.+))?$/);if(m){art=m[1]==="der/die"?"":m[1];w=m[1]==="der/die"?"der/die "+m[2]:m[2].trim();pl=(m[3]||"").trim();kind=art?"n":"x"}}
+  if(k==="N"){const m=de.match(/^(der|die|das|der\/die)\s+([^,]+?)(?:\s*,\s*(.+))?$/);if(m){art=m[1];w=m[2].trim();pl=(m[3]||"").trim();kind=art==="der/die"?"n2":"n"}}
   else if(k==="V")kind="v";else if(k==="A")kind="a";
   BASE.push({ch,topic,topicEn,art,w,pl,en,kind,src:src||"liste",key:"b:"+ch+":"+de})}));
 function topicsOf(ch){return [...new Set(BOOK.filter(b=>b[0]===ch).map(b=>b[1]))]}
@@ -874,7 +902,9 @@ const ALIST=APREP.trim().split("\n").map(l=>{const [v,p,c,en,ex]=l.split("|");re
 
 function allWords(){return BASE.concat(custom.map(c=>({...c,own:true,topic:"Meine Wörter",key:"e:"+c.id})))}
 function wordsFor(sel){const all=allWords();if(sel==="all")return all;if(sel==="E")return all.filter(w=>w.own);return all.filter(w=>w.ch===sel)}
-function artHTML(w){return w.art?`<span class="art art-${w.art}">${w.art}</span> ${esc(w.w)}`:esc(w.w)}
+function artHTML(w){if(!w.art)return esc(w.w);if(w.art==="der/die")return `<span class="art art-der">der</span>/<span class="art art-die">die</span> ${esc(w.w)}`;return `<span class="art art-${w.art}">${w.art}</span> ${esc(w.w)}`}
+function nounsIn(text){const seen=new Set(),out=[];for(const m of String(text).matchAll(/[A-ZÄÖÜ][a-zäöüß]+(?:-[A-ZÄÖÜ]?[a-zäöüß]+)*/g)){const e=LEX[m[0]];if(!e)continue;const k=e[0]+" "+e[1];if(seen.has(k))continue;seen.add(k);out.push(e)}return out}
+function nounsHTML(text,cls){const n=nounsIn(text);if(!n.length)return "";return `<div class="${cls||"nouns"}">${n.map(([a,b,pl,en])=>`<span class="nn" title="${esc(en)}"><span class="art art-${a}">${a}</span> ${esc(b)}${pl?`<span class="pl">, ${esc(pl)}</span>`:""}<span class="ne"> · ${esc(en)}</span></span>`).join("")}</div>`}
 function deText(w){return (w.art?w.art+" ":"")+w.w.replace(/\s*\(Pl\.\)/,"")}
 function caseTag(c){return c==="DA"?`<span class="case c-D">Dat</span> <span class="case c-A">Akk</span>`:`<span class="case c-${c}">${CASE[c]}</span>`}
 /* ---------- VERB ENGINE: forms + Rektion ---------- */
@@ -1119,7 +1149,7 @@ function bookList(word){
   const re=new RegExp(`(^|[\\s/(])${word}([\\s/.,)!?]|$)`);
   return BASE.filter(w=>re.test(w.w));
 }
-function bookHTML(book){return book.length?`<section class="msec"><h4>Im Buch <span class="count">${book.length}</span></h4>${book.map(w=>`<div class="vrow"><div>${annot(w.w)}</div><div class="en">${esc(w.en)}</div><div class="note">${esc(srcOf(w))}</div></div>`).join("")}</section>`:""}
+function bookHTML(book){return book.length?`<section class="msec"><h4>Im Buch <span class="count">${book.length}</span></h4>${book.map(w=>`<div class="vrow"><div>${annot(w.w)}</div><div class="en">${esc(w.en)}</div>${nounsHTML(w.w,"nouns sm")}<div class="note">${esc(srcOf(w))}</div></div>`).join("")}</section>`:""}
 function headHTML(kind,title,en){return `<header class="mhead"><div><span class="label hl">${kind}</span><h3 id="mtitle">${esc(title)}</h3>${en?`<div class="en">${esc(en)}</div>`:""}</div><button class="x" id="closeProf" aria-label="Schließen">×</button></header>`}
 function adjProfile(a){
   const rows=ALIST.filter(x=>x.v===a);if(!rows.length)return "";
@@ -1200,7 +1230,7 @@ function renderCard(){
   const frontDe=`<div class="front"${fs(w.w)}>${w.art?artHTML(w):annot(w.w)}</div>${w.pl?`<div class="pl">Pl. ${esc(w.pl)}</div>`:""}`;
   const frontEn=`<div class="front"${fs(w.en)}>${esc(w.en)}</div>`;
   const pv=!w.art&&phraseVerb(w.w), look=pv?`<div class="look"><span class="lk" data-v="${esc(pv)}" role="link" tabindex="0">Verb nachschlagen: ${esc(pv)} →</span></div>`:"";
-  const front=dir==="de"?frontDe:frontEn, back=(dir==="de"?`<div class="back">${esc(w.en)}</div>`:`<div class="back">${frontDe}</div>`)+look;
+  const front=dir==="de"?frontDe:frontEn, back=(dir==="de"?`<div class="back">${esc(w.en)}</div>`:`<div class="back">${frontDe}</div>`)+(w.kind!=="n"?nounsHTML(w.w):"")+look;
   t.innerHTML=top+`<button class="icard" id="card" aria-label="Karte umdrehen">
       <div class="meta"><span class="label">${esc(ch)} · ${session.i+1}/${session.queue.length}</span><span class="boxes" title="Box ${box}/5">${[1,2,3,4,5].map(n=>`<i class="${box>=n?"on":""}"></i>`).join("")}</span></div>
       ${front}${session.flipped?back:`<div class="hint">Tippen oder Leertaste zum Umdrehen</div>`}
@@ -1224,7 +1254,7 @@ const DRILLS={
   luecke:{name:"Lückentext",desc:"Fehlendes Wort in der Wendung",words:true,make(){
     const pool=shuffle(drillWords());
     for(const w of pool){const g=gap(w.w);if(!g)continue;
-      return {type:"typed",prompt:g.html,sub:esc(w.en),fields:[{label:`Fehlendes Wort (${g.answer[0]}… , ${g.answer.length} Buchstaben)`,answer:g.answer}],explain:`<b>${esc(w.w)}</b><br><span class="note">${esc(srcOf(w))}</span>`}}
+      return {type:"typed",prompt:g.html,sub:esc(w.en),fields:[{label:`Fehlendes Wort (${g.answer[0]}… , ${g.answer.length} Buchstaben)`,answer:g.answer}],explain:`<b>${esc(w.w)}</b>${nounsHTML(w.w)}<span class="note">${esc(srcOf(w))}</span>`}}
     return null}},
   bedeutung:{name:"Was bedeutet das?",desc:"Deutsch → Englisch",words:true,make(){
     const pool=drillWords();if(pool.length<4)return null;const w=pick(pool);
@@ -1312,18 +1342,20 @@ document.addEventListener("keydown",e=>{
 /* ---------- SUCHEN ---------- */
 const FILTERS=[["all","Alle"],["n","Wendungen"],["v","Verben"],["vp","Verb + Präp."],["vc","Verb + Kasus"],["ap","Adjektiv + Präp."]];
 let filt=LS.get("wk_filt","all");
-function allVerbs(){
+const NOT_VERB=new Set("abgeschlossen angekommen angesehen ausgewiesen bescheiden draußen drinnen eigen eingeschlafen einverstanden einzeln gelungen geschlossen gesprochen modern selten übertroffen ununterbrochen verboten verbunden verschieden vorhanden zufrieden gesehen verloren".split(" "));
+let ADJ=new Set();
+function allVerbs(){if(!ADJ.size)BASE.forEach(w=>{if(w.kind==="a"&&/^[a-zäöüß]+$/.test(w.w))ADJ.add(w.w)});
   const m=new Map();
-  const add=(v,en)=>{v=v.replace(/^sich /,"");if(!/^[a-zäöüß]{2,}(en|ern|eln)$/.test(v)&&v!=="sein"&&v!=="tun")return;en=en||GLOSS[v]||"";if(!m.has(v)||(!m.get(v)&&en))m.set(v,en)};
+  const add=(v,en)=>{v=v.replace(/^sich /,"");if(NOT_VERB.has(v)||ADJ.has(v)||/^(ab|an|auf|aus|ein|ge|zu|ver|be|er|über|unter)?ge[a-zäöüß]+(en|t)$/.test(v)&&!isVerb(v)&&!GLOSS[v]&&!/^ge(hen|ben|nießen|winnen|hören|fallen|raten|lingen|langen|stalten|stehen|brauchen)$/.test(v))return;if(!/^[a-zäöüß]{2,}(en|ern|eln)$/.test(v)&&v!=="sein"&&v!=="tun")return;en=en||GLOSS[v]||"";if(!m.has(v)||(!m.get(v)&&en))m.set(v,en)};
   VLIST.forEach(x=>add(x.v,x.en));CLIST.forEach(x=>add(x.v,x.en));PLIST.forEach(x=>add(x.v,""));
-  allWords().forEach(w=>{if(w.art)return;const pv=phraseVerb(w.w);if(pv)add(pv,"");if((w.own||w.kind==="v")&&/^(sich )?[a-zäöüß]+n$/.test(w.w))add(w.w,w.en)});
+  allWords().forEach(w=>{if(w.art||w.kind==="a"||w.kind==="n2")return;const pv=w.kind==="x"||w.kind==="v"?phraseVerb(w.w):null;if(pv)add(pv,"");if((w.own||w.kind==="v")&&/^(sich )?[a-zäöüß]+n$/.test(w.w))add(w.w,w.en)});
   return [...m].sort((a,b)=>a[0].localeCompare(b[0],"de"));
 }
 let IDX=null,IDXKEY="";
 function index(){
   const key=custom.length+":"+(custom[custom.length-1]||{}).id;if(IDX&&IDXKEY===key)return IDX;
   const out=[];
-  allWords().forEach(w=>out.push({t:"n",look:w.art?"":(w.kind==="v"&&/^(sich )?[a-zäöüß]+n$/.test(w.w)?w.w:(phraseVerb(w.w)||(w.kind==="x"&&/^(sich )?[a-zäöüß]+n$/.test(w.w)?w.w:""))),de:deText(w),en:w.en,html:w.art?artHTML(w):annot(w.w),det:`<span class="k">${esc(srcOf(w))}</span>${w.pl?`<span>Pl. ${esc(w.pl)}</span>`:""}`}));
+  allWords().forEach(w=>out.push({t:"n",look:w.art?"":(w.kind==="v"&&/^(sich )?[a-zäöüß]+n$/.test(w.w)?w.w:(phraseVerb(w.w)||(w.kind==="x"&&/^(sich )?[a-zäöüß]+n$/.test(w.w)?w.w:""))),de:deText(w),en:w.en,html:w.art?artHTML(w):annot(w.w),det:`<span class="k">${esc(srcOf(w))}</span>${w.pl?`<span>Pl. ${esc(w.pl)}</span>`:""}${w.kind!=="n"&&w.kind!=="n2"?nounsHTML(w.w,"nouns sm"):""}`}));
   allVerbs().forEach(([v,en])=>{const f=verbForms(v);const b=bookList(v).length;const vt=verbType(v);out.push({t:"v",look:v,de:v+" "+f.p3+" "+f.pr+" "+f.pf+" "+VT[vt][0],en,html:esc(v),tag:`<span class="vt vt-${vt} sm" title="${VT[vt][0]}: ${VT[vt][1]}">${{reg:"reg.",irr:"unreg.",mix:"gem."}[vt]}</span>`,det:`<span class="forms">${esc(f.p3)} · ${esc(f.pr)} · ${esc(f.pf)}</span>${b?`<span>${b}× im Buch</span>`:""}`})});
   PLIST.forEach(x=>out.push({t:"vp",look:x.v,de:x.v+" "+x.p,en:x.en,html:`${esc(x.v)} <b>${esc(x.p)}</b>`,det:`<span class="k">Verb + Präp.</span>${caseTag(x.c)}<span class="ex">${esc(x.ex)}</span>`}));
   CLIST.forEach(x=>out.push({t:"vc",look:x.v,de:x.v,en:x.en,html:esc(x.v),det:`<span class="k">Verb + Kasus</span>${caseTag(x.c)}<span class="ex">${esc(x.ex)}</span>`}));
@@ -1398,7 +1430,7 @@ document.querySelectorAll(".bookFile").forEach(inp=>inp.addEventListener("change
   const rd=new FileReader();
   rd.onload=()=>{try{const d=JSON.parse(rd.result);const b=Array.isArray(d)?d:d.book;
       if(!validBook(b))throw new Error("format");
-      localStorage.setItem("wk_book",JSON.stringify(b));localStorage.setItem("wk_vprep",JSON.stringify(Array.isArray(d)?[]:(d.vprep||[])));msg.textContent="Geladen. Die App startet neu …";setTimeout(()=>location.reload(),600);
+      localStorage.setItem("wk_book",JSON.stringify(b));localStorage.setItem("wk_lex",JSON.stringify(Array.isArray(d)?{}:(d.lex||{})));localStorage.setItem("wk_vprep",JSON.stringify(Array.isArray(d)?[]:(d.vprep||[])));msg.textContent="Geladen. Die App startet neu …";setTimeout(()=>location.reload(),600);
     }catch(e){msg.textContent=e&&e.name==="QuotaExceededError"?"Kein Speicherplatz frei. Bitte Browserdaten prüfen.":"Diese Datei ist keine Wortkiste-Buchliste. Wähle wortkiste-buchliste.json."}};
   rd.onerror=()=>{msg.textContent="Die Datei konnte nicht gelesen werden."};
   rd.readAsText(f);
