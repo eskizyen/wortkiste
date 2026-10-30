@@ -149,7 +149,7 @@ textarea{font-family:var(--f-mono);font-size:14px;min-height:140px;resize:vertic
 .r:first-child{border-top:0}
 .r .de{font-weight:600;word-break:break-word}
 .r .en{color:var(--muted);word-break:break-word}
-.r .det{grid-column:1/-1;font-size:13.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.r .det{flex-wrap:wrap;grid-column:1/-1;font-size:13.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
 .pp{border-bottom:2px solid currentColor;padding-bottom:0;white-space:nowrap}
 .pp sub{font:500 9.5px/1 var(--f-mono);letter-spacing:.03em;margin-left:2px;vertical-align:-1px}
 .icard .pp{color:inherit;border-bottom-color:var(--line)}
@@ -200,14 +200,26 @@ html.lock,html.lock body{overflow:hidden}
 .filebtn{position:relative;overflow:hidden;align-self:flex-start}
 .filebtn input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
 .filebtn:focus-within{outline:2px solid var(--accent);outline-offset:2px}
-.nouns{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:10px;justify-content:center;font:400 13.5px/1.35 var(--f-body);color:var(--ink)}
-.nouns.sm{justify-content:flex-start;margin-top:4px;font-size:12.5px;grid-column:1/-1}
-.nn{white-space:nowrap}.nn .pl{color:var(--muted)}.nn .ne{color:var(--muted)}
-.nouns.sm .ne{display:none}
 .exm{margin-top:12px;display:flex;flex-direction:column;gap:2px;font:400 15px/1.4 var(--f-body);text-align:center}
 .exm .exde{font-style:italic;color:var(--ink)}.exm .exen{color:var(--muted);font-size:13.5px}
-.exm.sm{grid-column:1/-1;text-align:left;margin-top:4px;font-size:13px}.exm.sm .exen{font-size:12.5px}
+.exm.sm{flex-basis:100%;grid-column:1/-1;text-align:left;margin-top:4px;font-size:13px}.exm.sm .exen{font-size:12.5px}
 .explain .exm{text-align:left}
+.nouns{display:flex;flex-direction:column;gap:6px;margin-top:12px;align-items:stretch}
+.nouns.sm{margin-top:6px;grid-column:1/-1;flex-basis:100%;width:100%}
+.nn{all:unset;cursor:pointer;display:flex;flex-wrap:wrap;column-gap:6px;align-items:baseline;box-sizing:border-box;width:100%;text-align:left;padding:6px 10px;border-radius:8px;background:var(--soft);font:400 15px/1.35 var(--f-body);color:var(--ink)}
+.nn .art{font-weight:700;font-size:15px}
+.nn b{font-weight:600}
+.nn .pl{color:var(--muted);font-size:13px}
+.nn .ne{flex-basis:100%;color:var(--muted);font-size:13.5px}
+.nn:focus-visible{outline:2px solid var(--accent)}
+.nouns.sm .nn{font-size:14px;padding:5px 9px}
+.nounhit{all:unset;cursor:pointer;position:relative;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;background:var(--card);border:2px solid var(--accent);border-radius:12px;padding:14px 16px;margin-bottom:10px;width:100%;box-sizing:border-box}
+.nounhit .art{font:700 26px/1 var(--f-body)}.nounhit b{font:600 26px/1.1 var(--f-body)}
+.nounhit .pl{color:var(--muted);font-size:16px}.nounhit .en{width:100%;color:var(--ink);font-size:16px}
+.nounhit .go{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:24px}
+.nounhit{padding-right:40px}
+.mhead h3 .art{font-weight:700}
+.icard .front .art{font-weight:700}
 .r.click{cursor:pointer}.r.click:hover,.r.click:focus-visible{background:var(--soft)}
 .r.click .de::after{content:" ›";color:var(--muted)}
 .x{all:unset;cursor:pointer;margin-left:auto;font:400 22px/1 var(--f-body);color:var(--muted);padding:0 4px}
@@ -909,7 +921,8 @@ function allWords(){return BASE.concat(custom.map(c=>({...c,own:true,topic:"Mein
 function wordsFor(sel){const all=allWords();if(sel==="all")return all;if(sel==="E")return all.filter(w=>w.own);return all.filter(w=>w.ch===sel)}
 function artHTML(w){if(!w.art)return esc(w.w);if(w.art==="der/die")return `<span class="art art-der">der</span>/<span class="art art-die">die</span> ${esc(w.w)}`;return `<span class="art art-${w.art}">${w.art}</span> ${esc(w.w)}`}
 function nounsIn(text){const seen=new Set(),out=[];for(const m of String(text).matchAll(/[A-ZÄÖÜ][a-zäöüß]+(?:-[A-ZÄÖÜ]?[a-zäöüß]+)*/g)){const e=LEX[m[0]];if(!e)continue;const k=e[0]+" "+e[1];if(seen.has(k))continue;seen.add(k);out.push(e)}return out}
-function nounsHTML(text,cls){const n=nounsIn(text);if(!n.length)return "";return `<div class="${cls||"nouns"}">${n.map(([a,b,pl,en])=>`<span class="nn" title="${esc(en)}"><span class="art art-${a}">${a}</span> ${esc(b)}${pl?`<span class="pl">, ${esc(pl)}</span>`:""}<span class="ne"> · ${esc(en)}</span></span>`).join("")}</div>`}
+function nounChip([a,b,pl,en]){return `<button class="nn" data-noun="${esc(b)}"><span class="art art-${a}">${a}</span><b>${esc(b)}</b>${pl?`<span class="pl">Pl. ${esc(pl)}</span>`:""}<span class="ne">${esc(en)}</span></button>`}
+function nounsHTML(text,cls){const n=nounsIn(text);if(!n.length)return "";return `<div class="${cls||"nouns"}">${n.map(nounChip).join("")}</div>`}
 function deText(w){return (w.art?w.art+" ":"")+w.w.replace(/\s*\(Pl\.\)/,"")}
 function caseTag(c){return c==="DA"?`<span class="case c-D">Dat</span> <span class="case c-A">Akk</span>`:`<span class="case c-${c}">${CASE[c]}</span>`}
 /* ---------- VERB ENGINE: forms + Rektion ---------- */
@@ -1170,7 +1183,31 @@ function adjProfile(a){
   const rows=ALIST.filter(x=>x.v===a);if(!rows.length)return "";
   return headHTML("Adjektiv",a,rows[0].en)+`<section class="msec"><h4>Präpositionen</h4>${rows.map(x=>`<div class="vrow"><div><b>${esc(x.v)} ${esc(x.p)}</b> + ${caseTag(x.c)}</div><div class="en">${esc(x.en)}</div><div class="ex">${esc(x.ex)}</div>${pronLine(x.p,x.c)}</div>`).join("")}</section>`+bookHTML(bookList(a));
 }
+function lexFind(q){
+  let t=String(q).trim().replace(/^(der|die|das)\s+/i,"").split(",")[0].trim();if(!t)return null;
+  const cap=t.charAt(0).toUpperCase()+t.slice(1);
+  return LEX[t]||LEX[cap]||null;
+}
+function nounProfile(q){
+  const e=lexFind(q);if(!e)return "";const [a,b,pl,en]=e;
+  const own=BASE.find(w=>w.kind==="n"&&w.w===b&&w.ex);
+  const re=new RegExp(`(^|[^A-Za-zÄÖÜäöüß])${b}(e|en|n|s|es|er|ern)?([^A-Za-zÄÖÜäöüß]|$)`);
+  const book=BASE.filter(w=>w.kind!=="n"&&re.test(w.w)).slice(0,40);
+  return `<header class="mhead"><div><span class="label">Nomen</span><h3 id="mtitle"><span class="art art-${a}">${a}</span> ${esc(b)}</h3>${pl?`<div class="note">Plural: ${esc(pl)}</div>`:""}<div class="en">${esc(own?own.en:en)}</div></div><button class="x" id="closeProf" aria-label="Schließen">×</button></header>`+
+   (own?`<section class="msec"><h4>Beispiel</h4>${exHTML(own,"exm sm")}<div class="note">${esc(srcOf(own))}</div></section>`:"")+
+   `<section class="msec"><h4>Fälle</h4><div class="tablewrap"><table class="conj"><tbody>${declRows(a,b,pl)}</tbody></table></div></section>`+
+   (book.length?`<section class="msec"><h4>Im Buch <span class="count">${book.length}</span></h4>${book.map(w=>`<div class="vrow"><div>${annot(w.w)}</div><div class="en">${esc(w.en)}</div><div class="note">${esc(srcOf(w))}</div></div>`).join("")}</section>`:"");
+}
+function plForm(b,pl){if(!pl||pl==="-"||/Pl\./.test(pl))return pl==="-"?b:"";if(pl.startsWith("-¨")){const u=b.replace(/([aou])(?=[^aouäöü]*$)/,m=>({a:"ä",o:"ö",u:"ü"}[m]));return u+pl.slice(2)}if(pl.startsWith("-"))return b+pl.slice(1);return pl}
+function declRows(a,b,pl){
+  const D={der:["der","den","dem","des"],die:["die","die","der","der"],das:["das","das","dem","des"]}[a];
+  const gs=a==="die"?b:(/(s|ß|x|z)$/.test(b)?b+"es":b+"s");
+  const p=plForm(b,pl);const pd=p&&!/[ns]$/.test(p)?p+"n":p;
+  const rows=[["Nom",D[0]+" "+b,p?"die "+p:"–"],["Akk",D[1]+" "+b,p?"die "+p:"–"],["Dat",D[2]+" "+b,p?"den "+pd:"–"],["Gen",D[3]+" "+gs,p?"der "+p:"–"]];
+  return `<tr><th></th><th>Singular</th><th>Plural</th></tr>`+rows.map(r=>`<tr><td>${r[0]}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join("");
+}
 function verbProfile(q){
+  if(/^[A-ZÄÖÜ]|^(der|die|das)\s/i.test(String(q).trim())&&lexFind(q))return nounProfile(q);
   const raw=norm(q),askedRefl=/^sich\s+/.test(raw);let v=raw.replace(/^sich\s+/,"");
   const adj=adjProfile(v);if(adj)return adj;
   if(!/^[a-zäöüß]{3,}n$/.test(v))return "";
@@ -1355,7 +1392,7 @@ document.addEventListener("keydown",e=>{
 });
 
 /* ---------- SUCHEN ---------- */
-const FILTERS=[["all","Alle"],["n","Wendungen"],["v","Verben"],["vp","Verb + Präp."],["vc","Verb + Kasus"],["ap","Adjektiv + Präp."]];
+const FILTERS=[["all","Alle"],["n","Wörter"],["v","Verben"],["vp","Verb + Präp."],["vc","Verb + Kasus"],["ap","Adjektiv + Präp."]];
 let filt=LS.get("wk_filt","all");
 const NOT_VERB=new Set("abgeschlossen angekommen angesehen ausgewiesen bescheiden draußen drinnen eigen eingeschlafen einverstanden einzeln gelungen geschlossen gesprochen modern selten übertroffen ununterbrochen verboten verbunden verschieden vorhanden zufrieden gesehen verloren".split(" "));
 let ADJ=new Set();
@@ -1388,12 +1425,14 @@ let qTimer=null;
 function renderSearch(){
   $("#filters").innerHTML=FILTERS.map(([k,l])=>{const n=k==="all"?"":` <span class="n">${index().filter(r=>r.t===k).length}</span>`;return `<button class="chip" data-f="${k}" aria-pressed="${k===filt}">${l}${n}</button>`}).join("");
   const qv=$("#q").value.trim(),q=fold(qv);
+  const nq=qv&&lexFind(qv);
   const hasProf=qv&&verbProfile(qv);
-  $("#profile").innerHTML=hasProf?`<button class="btn primary" id="openProf" data-v="${esc(qv)}">Alle Details zu „${esc(qv)}“ →</button>`:"";
+  $("#profile").innerHTML=(nq?`<button class="nounhit" data-noun="${esc(nq[1])}"><span class="art art-${nq[0]}">${nq[0]}</span> <b>${esc(nq[1])}</b>${nq[2]?`<span class="pl">Pl. ${esc(nq[2])}</span>`:""}<span class="en">${esc(nq[3])}</span><span class="go">›</span></button>`:"")+(hasProf&&!/^[A-ZÄÖÜ]/.test(qv)?`<button class="btn primary" id="openProf" data-v="${esc(qv)}">Alle Details zu „${esc(qv)}“ →</button>`:"");
   if(!q&&filt==="all"){$("#count").textContent="";$("#results").innerHTML="";$("#results").hidden=true;$("#recentBox").innerHTML=recentHTML();return}
   $("#recentBox").innerHTML="";$("#results").hidden=false;
   let res=index().filter(r=>filt==="all"||r.t===filt);
-  if(q)res=res.filter(r=>fold(r.de).includes(q)||fold(r.en).includes(q)).sort((a,b)=>(fold(a.de).startsWith(q)?0:1)-(fold(b.de).startsWith(q)?0:1));
+  const st=r=>{const d=fold(r.de).replace(/^(der|die|das|der\/die) /,"");return d===q?0:d.startsWith(q)?1:2};
+  if(q)res=res.filter(r=>fold(r.de).includes(q)||fold(r.en).includes(q)).sort((a,b)=>st(a)-st(b));
   const LIMIT=q?60:200;
   $("#count").textContent=res.length>LIMIT?`${res.length} Einträge · die ersten ${LIMIT}`:`${res.length} Einträge`;
   $("#results").innerHTML=res.length?res.slice(0,LIMIT).map(r=>`<div class="r${r.look?" click":""}${r.tag?" tagged":""}"${r.look?` data-look="${esc(r.look)}" role="button" tabindex="0"`:""}>${r.tag||""}<div class="de">${r.html}</div><div class="en">${esc(r.en)}</div><div class="det">${r.det}</div></div>`).join(""):`<div class="r"><div class="en">Nichts gefunden. Neue Wörter kannst du unter „Meine Wörter“ eintragen.</div></div>`;
@@ -1413,6 +1452,7 @@ $("#modal").addEventListener("click",e=>{if(e.target.id==="modal"||e.target.clos
   document.querySelectorAll("#mbody .tbtn").forEach(b=>b.setAttribute("aria-pressed",String(on&&b===t)));
   document.querySelectorAll("#mbody .tlist").forEach(l=>l.hidden=!(on&&l.dataset.tl===t.dataset.t))});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#modal").hidden)closeLook()},true);
+document.addEventListener("click",e=>{const n=e.target.closest("[data-noun]");if(!n)return;e.preventDefault();e.stopPropagation();if(!$("#modal").hidden)closeLook();openLook(n.dataset.noun)},true);
 
 /* ---------- MEINE WÖRTER ---------- */
 $("#bulkCh").innerHTML=`<option value="">ohne Kapitel</option>`+CHAPTERS.map((t,i)=>`<option value="${i+1}">Kap. ${i+1} · ${esc(t)}</option>`).join("");
