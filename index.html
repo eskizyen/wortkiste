@@ -1024,7 +1024,10 @@ ziehen|zieht|zog|gezogen|h
 zwingen|zwingt|zwang|gezwungen|h`;
 const STR={};STRONG.split("\n").forEach(l=>{const [v,p3,pr,pp,a]=l.split("|");STR[v]={p3,pr,pp,aux:a==="s"?"ist":"hat"}});
 const REG=new Set(`bereiten begleiten verbreiten achten antworten arbeiten atmen baden bauen bessern bilden brauchen danken decken deuten dienen drehen drucken drücken ehren enden fassen fehlen feiern folgen fragen freuen fühlen führen füllen fürchten glauben gründen grüßen handeln hassen heiraten heizen hindern hoffen holen hören kämpfen kaufen kehren klären kleben klingeln klopfen kochen kosten kümmern kündigen lachen landen leben legen lehnen leiten lernen lieben lohnen lösen machen malen melden merken mieten mischen nutzen nützen öffnen ordnen packen parken passen pflegen planen probieren prüfen putzen rauchen räumen rechnen reden regnen reichen reisen retten richten rühren sagen sammeln schalten schätzen schauen schenken schicken schmecken setzen sorgen sparen spielen spülen starten stecken stellen steuern stimmen stören suchen tanzen tauschen teilen trauen träumen trennen trocknen üben wachen wählen wandern warnen warten wechseln wecken weinen wirken wohnen wünschen wundern zahlen zählen zeichnen zeigen zielen`.split(" "));
-const SEP="zurück zusammen weiter vorbei heraus herein hinaus herunter hinunter kennen spazieren statt teil fest fern frei fort nieder los mit nach vor weg dar zu ab an auf aus bei ein her hin um durch".split(" ");
+const SEP="hervor zurück zusammen weiter vorbei voran entgegen heraus herein hinaus hinein herunter hinunter herauf hinauf kennen spazieren statt teil fest fern frei fort nieder los mit nach vor weg dar zu ab an auf aus bei ein her hin um durch".split(" ");
+const MAYBE_INSEP=new Set(["durch","über","unter","wider","hinter"]);
+const NOT_SEP=new Set("antworten angeln einigen ankern herrschen hindern zucken zuckern".split(" "));
+const looksVerb=r=>r.length>=5&&!/ieren$/.test(r)&&!/^(rsch|ck)/.test(r)&&/^[a-zäöüß]+(en|ern|eln)$/.test(r);
 const INSEP="miss emp zer ent ver be ge er über unter hinter wider".split(" ");
 const AUX_S=new Set("aufstehen entstehen einschlafen aufwachen verschwinden begegnen verreisen erscheinen vergehen entkommen umziehen gelingen passieren reisen wandern folgen landen".split(" "));
 const AUX_H=new Set("bekommen verstehen".split(" "));
@@ -1040,6 +1043,13 @@ function regForms(v,noGe){
 function core(v,depth){
   if(STR[v])return {...STR[v]};
   if(REG.has(v))return regForms(v);
+  if(depth<2&&!NOT_SEP.has(v)){
+    for(const p of SEP){if(!v.startsWith(p)||v.length<=p.length+3)continue;if([...INSEP,...MAYBE_INSEP].some(q=>q.length>p.length&&v.startsWith(q)))continue;const r=v.slice(p.length);
+      if(isVerb(r)||STR[r]||INSEP.some(q=>r.startsWith(q)&&isVerb(r.slice(q.length))))break;
+      if(MAYBE_INSEP.has(p))continue;
+      if(looksVerb(r)){const b=core(r,depth+1);return {p3:b.p3+" "+p,pr:b.pr+" "+p,pp:p+b.pp,aux:b.aux,sep:p}}}
+    for(const p of MAYBE_INSEP){if(!v.startsWith(p))continue;const r=v.slice(p.length);if(isVerb(r)||STR[r]||!looksVerb(r))continue;const b=regForms(r);return {p3:p+b.p3,pr:p+b.pr,pp:p+b.pp.replace(/^ge/,""),aux:"hat"}}
+  }
   if(depth<2)for(const p of SEP)if(v.startsWith(p)&&v.length>p.length+2){const r=v.slice(p.length);if(isVerb(r)||(depth<1&&INSEP.some(q=>r.startsWith(q)&&isVerb(r.slice(q.length))))){const b=core(r,depth+1);return {p3:b.p3+" "+p,pr:b.pr+" "+p,pp:p+b.pp,aux:b.aux,sep:p}}}
   for(const q of INSEP)if(v.startsWith(q)&&v.length>q.length+2){const r=v.slice(q.length);if(isVerb(r)){const b=STR[r]?{...STR[r]}:regForms(r);return {p3:q+b.p3,pr:q+b.pr,pp:q+b.pp.replace(/^ge/,""),aux:"hat"}}}
   return regForms(v);
