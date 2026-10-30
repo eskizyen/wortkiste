@@ -1480,6 +1480,7 @@ $("#importBtn").onclick=()=>{try{const d=JSON.parse($("#backup").value);if(!Arra
 
 /* ---------- BOOK FILE ---------- */
 function validBook(b){return Array.isArray(b)&&b.length>0&&b.every(x=>Array.isArray(x)&&typeof x[0]==="number"&&typeof x[1]==="string"&&Array.isArray(x[3]))}
+if(BOOK.length&&!Object.keys(LEX).length){const n=document.createElement("div");n.className="panel setup";n.innerHTML=`<h3>Neue Buchliste laden</h3><p class="note" style="margin:0 0 10px">Your word list is an older version. Load the newest <b>wortkiste-buchliste.json</b> to see articles, English and examples for every word.</p><label class="btn primary filebtn">Datei auswählen<input type="file" class="bookFile" accept=".json,application/json"></label><p class="note bookMsg" style="margin:8px 0 0"></p>`;$("#bookSetup").after(n);}
 document.querySelectorAll(".bookFile").forEach(inp=>inp.addEventListener("change",()=>{
   const f=inp.files&&inp.files[0];const msg=inp.closest(".panel").querySelector(".bookMsg");if(!f)return;
   const rd=new FileReader();
