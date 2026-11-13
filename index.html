@@ -222,6 +222,7 @@ html.lock,html.lock body{overflow:hidden}
 .icard .front .art{font-weight:700}
 .r.click{cursor:pointer}.r.click:hover,.r.click:focus-visible{background:var(--soft)}
 .r.click .de::after{content:" ›";color:var(--muted)}
+.opt .pl,.prompt .pl,.mhead h3 .pl{font-size:.6em;color:var(--muted);font-weight:400}
 .x{all:unset;cursor:pointer;margin-left:auto;font:400 22px/1 var(--f-body);color:var(--muted);padding:0 4px}
 
 #profile{scroll-margin-top:12px}
@@ -1227,6 +1228,19 @@ function verbProfile(q){
 
 /* ---------- POPUP ---------- */
 let lastFocus=null;
+function wordHTML(w){if(w.art)return artHTML(w)+(w.pl?` <span class="pl">Pl. ${esc(w.pl)}</span>`:"");return annot(w.w)}
+function itemProfile(w){
+  const pv=w.kind!=="n"&&w.kind!=="n2"?(w.kind==="v"?w.w.replace(/^sich /,""):phraseVerb(w.w)):null;
+  return `<header class="mhead"><div><span class="label">${esc(srcOf(w))}</span><h3 id="mtitle">${wordHTML(w)}</h3><div class="en">${esc(w.en)}</div></div><button class="x" id="closeProf" aria-label="Schließen">×</button></header>`+
+   (w.ex?`<section class="msec"><h4>Beispiel</h4>${exHTML(w,"exm sm")}</section>`:"")+
+   (w.kind!=="n"?(nounsIn(w.w).length?`<section class="msec"><h4>Nomen</h4>${nounsHTML(w.w,"nouns sm")}</section>`:""):"")+
+   (pv&&verbProfile(pv)?`<section class="msec"><h4>Verb</h4><button class="btn" data-verb="${esc(pv)}">${esc(pv)} – Formen und Fälle →</button></section>`:"");
+}
+function showHTML(html){lastFocus=document.activeElement;$("#mbody").innerHTML=html;$("#modal").hidden=false;document.documentElement.classList.add("lock");$("#mbody").scrollTop=0;$("#closeProf").focus()}
+function openItem(w){
+  if(w.kind==="n"&&lexFind(w.w)){openLook(w.w);return}
+  showHTML(itemProfile(w));
+}
 function openLook(v){
   const html=verbProfile(v);if(!html)return;
   pushRecent("look",v.replace(/^sich /,""));if(tab==="suchen"&&!$("#q").value.trim())setTimeout(renderSearch,0);
@@ -1306,14 +1320,14 @@ const DRILLS={
   luecke:{name:"Lückentext",desc:"Fehlendes Wort in der Wendung",words:true,make(){
     const pool=shuffle(drillWords());
     for(const w of pool){const g=gap(w.w);if(!g)continue;
-      return {type:"typed",prompt:g.html,sub:esc(w.en),fields:[{label:`Fehlendes Wort (${g.answer[0]}… , ${g.answer.length} Buchstaben)`,answer:g.answer}],explain:`<b>${esc(w.w)}</b>${nounsHTML(w.w)}<span class="note">${esc(srcOf(w))}</span>`}}
+      return {type:"typed",prompt:g.html,sub:esc(w.en),fields:[{label:`Fehlendes Wort (${g.answer[0]}… , ${g.answer.length} Buchstaben)`,answer:g.answer}],explain:`<b>${wordHTML(w)}</b>${nounsHTML(w.w)}<span class="note">${esc(srcOf(w))}</span>`}}
     return null}},
   bedeutung:{name:"Was bedeutet das?",desc:"Deutsch → Englisch",words:true,make(){
     const pool=drillWords();if(pool.length<4)return null;const w=pick(pool);
-    return {type:"mc",prompt:esc(w.w),sub:esc(srcOf(w)),options:distract(w.en,near(w).map(x=>x.en)),answer:w.en,small:true,explain:`<b>${esc(w.w)}</b> = ${esc(w.en)}${exHTML(w)}`}}},
+    return {type:"mc",prompt:wordHTML(w),sub:esc(srcOf(w)),options:distract(w.en,near(w).map(x=>x.en)),answer:w.en,small:true,explain:`<b>${wordHTML(w)}</b> = ${esc(w.en)}${exHTML(w)}${w.kind!=="n"?nounsHTML(w.w):""}`}}},
   ausdruck:{name:"Wie sagt man …?",desc:"Englisch → Deutsch",words:true,make(){
     const pool=drillWords();if(pool.length<4)return null;const w=pick(pool);
-    return {type:"mc",prompt:esc(w.en),sub:esc(srcOf(w)),options:distract(w.w,near(w).map(x=>x.w)),answer:w.w,small:true,explain:`<b>${esc(w.w)}</b> = ${esc(w.en)}${exHTML(w)}`}}},
+    return {type:"mc",prompt:esc(w.en),sub:esc(srcOf(w)),options:distract(deText(w),near(w).map(deText)),answer:deText(w),small:true,explain:`<b>${wordHTML(w)}</b> = ${esc(w.en)}${exHTML(w)}${w.kind!=="n"?nounsHTML(w.w):""}`}}},
   artikel:{name:"Artikel",desc:"der, die oder das?",words:true,make(){
     const pool=drillWords().filter(w=>w.kind==="n"&&w.art&&!/\(Pl\.\)/.test(w.w));if(!pool.length)return {empty:"In dieser Auswahl gibt es keine Nomen mit Artikel. Lade die neue Buchliste oder trag Nomen unter „Meine Wörter“ ein."};const w=pick(pool);
     return {type:"mc",prompt:esc(w.w),sub:esc(w.en),options:["der","die","das"],answer:w.art,cls:o=>"art-"+o,explain:`<b>${artHTML(w)}</b>${w.pl?` · Pl. ${esc(w.pl)}`:""}`}}},
@@ -1407,7 +1421,7 @@ let IDX=null,IDXKEY="";
 function index(){
   const key=custom.length+":"+(custom[custom.length-1]||{}).id;if(IDX&&IDXKEY===key)return IDX;
   const out=[];
-  allWords().forEach(w=>out.push({t:"n",look:w.art?"":(w.kind==="v"&&/^(sich )?[a-zäöüß]+n$/.test(w.w)?w.w:(phraseVerb(w.w)||(w.kind==="x"&&/^(sich )?[a-zäöüß]+n$/.test(w.w)?w.w:""))),de:deText(w),en:w.en,html:w.art?artHTML(w):annot(w.w),det:`<span class="k">${esc(srcOf(w))}</span>${w.pl?`<span>Pl. ${esc(w.pl)}</span>`:""}${w.kind!=="n"&&w.kind!=="n2"?nounsHTML(w.w,"nouns sm"):""}${exHTML(w,"exm sm")}`}));
+  allWords().forEach(w=>out.push({t:"n",item:w,look:w.art?"":(w.kind==="v"&&/^(sich )?[a-zäöüß]+n$/.test(w.w)?w.w:(phraseVerb(w.w)||(w.kind==="x"&&/^(sich )?[a-zäöüß]+n$/.test(w.w)?w.w:""))),de:deText(w),en:w.en,html:w.art?artHTML(w):annot(w.w),det:`<span class="k">${esc(srcOf(w))}</span>${w.pl?`<span>Pl. ${esc(w.pl)}</span>`:""}${w.kind!=="n"&&w.kind!=="n2"?nounsHTML(w.w,"nouns sm"):""}${exHTML(w,"exm sm")}`}));
   allVerbs().forEach(([v,en])=>{const f=verbForms(v);const b=bookList(v).length;const vt=verbType(v);out.push({t:"v",look:v,de:v+" "+f.p3+" "+f.pr+" "+f.pf+" "+VT[vt][0],en,html:esc(v),tag:`<span class="vt vt-${vt} sm" title="${VT[vt][0]}: ${VT[vt][1]}">${{reg:"reg.",irr:"unreg.",mix:"gem."}[vt]}</span>`,det:`<span class="forms">${esc(f.p3)} · ${esc(f.pr)} · ${esc(f.pf)}</span>${b?`<span>${b}× im Buch</span>`:""}`})});
   PLIST.forEach(x=>out.push({t:"vp",look:x.v,de:x.v+" "+x.p,en:x.en,html:`${esc(x.v)} <b>${esc(x.p)}</b>`,det:`<span class="k">Verb + Präp.</span>${caseTag(x.c)}<span class="ex">${esc(x.ex)}</span>`}));
   CLIST.forEach(x=>out.push({t:"vc",look:x.v,de:x.v,en:x.en,html:esc(x.v),det:`<span class="k">Verb + Kasus</span>${caseTag(x.c)}<span class="ex">${esc(x.ex)}</span>`}));
@@ -1421,7 +1435,8 @@ function recentHTML(){
   if(!recent.length)return `<div class="empty"><p>Type a word, phrase or verb, in German or English. Tap a result for its forms, cases and all book phrases.</p><p class="note">Your recent searches and opened words will appear here.</p></div>`;
   return `<div class="recent"><div class="rhead"><span class="label">Zuletzt</span><button class="lnk" id="clearRecent">Verlauf löschen</button></div><div class="chips">${recent.map(r=>`<button class="chip rc" data-t="${r.t}" data-v="${esc(r.v)}">${r.t==="look"?"↗ ":"⌕ "}${esc(r.v)}</button>`).join("")}</div></div>`;
 }
-let qTimer=null;
+let qTimer=null,SHOWN=[];
+function openRow(el){const r=SHOWN[+el.dataset.ri];if(!r)return;if(r.item)openItem(r.item);else if(r.look)openLook(r.look)}
 function renderSearch(){
   $("#filters").innerHTML=FILTERS.map(([k,l])=>{const n=k==="all"?"":` <span class="n">${index().filter(r=>r.t===k).length}</span>`;return `<button class="chip" data-f="${k}" aria-pressed="${k===filt}">${l}${n}</button>`}).join("");
   const qv=$("#q").value.trim(),q=fold(qv);
@@ -1435,7 +1450,7 @@ function renderSearch(){
   if(q)res=res.filter(r=>fold(r.de).includes(q)||fold(r.en).includes(q)).sort((a,b)=>st(a)-st(b));
   const LIMIT=q?60:200;
   $("#count").textContent=res.length>LIMIT?`${res.length} Einträge · die ersten ${LIMIT}`:`${res.length} Einträge`;
-  $("#results").innerHTML=res.length?res.slice(0,LIMIT).map(r=>`<div class="r${r.look?" click":""}${r.tag?" tagged":""}"${r.look?` data-look="${esc(r.look)}" role="button" tabindex="0"`:""}>${r.tag||""}<div class="de">${r.html}</div><div class="en">${esc(r.en)}</div><div class="det">${r.det}</div></div>`).join(""):`<div class="r"><div class="en">Nichts gefunden. Neue Wörter kannst du unter „Meine Wörter“ eintragen.</div></div>`;
+  SHOWN=[];$("#results").innerHTML=res.length?res.slice(0,LIMIT).map(r=>`<div class="r click${r.tag?" tagged":""}" data-ri="${SHOWN.push(r)-1}" role="button" tabindex="0">${r.tag||""}<div class="de">${r.html}</div><div class="en">${esc(r.en)}</div><div class="det">${r.det}</div></div>`).join(""):`<div class="r"><div class="en">Nichts gefunden. Neue Wörter kannst du unter „Meine Wörter“ eintragen.</div></div>`;
 }
 $("#filters").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;filt=b.dataset.f;LS.set("wk_filt",filt);renderSearch()});
 $("#q").addEventListener("input",()=>{renderSearch();clearTimeout(qTimer);const v=$("#q").value.trim();if(v.length>=3)qTimer=setTimeout(()=>{if($("#q").value.trim()===v)pushRecent("q",v)},1500)});
@@ -1444,15 +1459,15 @@ $("#recentBox").addEventListener("click",e=>{
   if(e.target.closest("#clearRecent")){recent=[];LS.set("wk_recent",recent);renderSearch();return}
   const c=e.target.closest(".rc");if(!c)return;
   if(c.dataset.t==="look")openLook(c.dataset.v);else{$("#q").value=c.dataset.v;renderSearch();$("#q").focus()}});
-$("#results").addEventListener("click",e=>{const r=e.target.closest(".r.click");if(r)openLook(r.dataset.look)});
-$("#results").addEventListener("keydown",e=>{const r=e.target.closest(".r.click");if(r&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openLook(r.dataset.look)}});
+$("#results").addEventListener("click",e=>{if(e.target.closest("[data-noun]"))return;const r=e.target.closest(".r.click");if(r)openRow(r)});
+$("#results").addEventListener("keydown",e=>{const r=e.target.closest(".r.click");if(r&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openRow(r)}});
 $("#profile").addEventListener("click",e=>{const b=e.target.closest("#openProf");if(b)openLook(b.dataset.v)});
 $("#modal").addEventListener("click",e=>{if(e.target.id==="modal"||e.target.closest("#closeProf")){closeLook();return}
   const t=e.target.closest(".tbtn");if(!t)return;const on=t.getAttribute("aria-pressed")!=="true";
   document.querySelectorAll("#mbody .tbtn").forEach(b=>b.setAttribute("aria-pressed",String(on&&b===t)));
   document.querySelectorAll("#mbody .tlist").forEach(l=>l.hidden=!(on&&l.dataset.tl===t.dataset.t))});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#modal").hidden)closeLook()},true);
-document.addEventListener("click",e=>{const n=e.target.closest("[data-noun]");if(!n)return;e.preventDefault();e.stopPropagation();if(!$("#modal").hidden)closeLook();openLook(n.dataset.noun)},true);
+document.addEventListener("click",e=>{const vb=e.target.closest("[data-verb]");if(vb){e.preventDefault();e.stopPropagation();closeLook();openLook(vb.dataset.verb);return}const n=e.target.closest("[data-noun]");if(!n)return;e.preventDefault();e.stopPropagation();if(!$("#modal").hidden)closeLook();openLook(n.dataset.noun)},true);
 
 /* ---------- MEINE WÖRTER ---------- */
 $("#bulkCh").innerHTML=`<option value="">ohne Kapitel</option>`+CHAPTERS.map((t,i)=>`<option value="${i+1}">Kap. ${i+1} · ${esc(t)}</option>`).join("");
